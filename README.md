@@ -15,6 +15,7 @@ github-actions-exporter for prometheus
 Gauge type
 
 **Result possibility**
+
 | ID | Description |
 |---|---|
 | 0 | Failure |
@@ -23,6 +24,7 @@ Gauge type
 | 3 | In Progress |
 
 **Fields**
+
 | Name | Description |
 |---|---|
 | event | Event type like push/pull_request/...|
@@ -38,12 +40,14 @@ Gauge type
 (If you have self hosted runner)
 
 **Result possibility**
+
 | ID | Description |
 |---|---|
 | 0 | Offline |
 | 1 | Online |
 
 **Fields**
+
 | Name | Description |
 |---|---|
 | id | Runner id (incremental id) |

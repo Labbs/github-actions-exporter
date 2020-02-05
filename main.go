@@ -20,7 +20,7 @@ import (
 	"github-actions-exporter/config"
 )
 
-var version = "v1.0"
+var version = "v1.1"
 
 var (
 	runners = prometheus.NewGaugeVec(
@@ -148,6 +148,8 @@ func getJobsFromGithub() {
 					s = 2
 				} else if r.Status == "in_progress" {
 					s = 3
+				} else if r.Status == "queued" {
+					s = 4
 				}
 				jobs.WithLabelValues(repo, strconv.Itoa(r.ID), r.NodeID, r.HeadBranch, r.HeadSha, strconv.Itoa(r.RunNumber), r.Event, r.Status).Set(s)
 			}
