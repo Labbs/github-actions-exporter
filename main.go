@@ -20,7 +20,7 @@ import (
 	"github-actions-exporter/config"
 )
 
-var version = "v1.0"
+var version = "v1.1"
 
 var (
 	runners = prometheus.NewGaugeVec(
