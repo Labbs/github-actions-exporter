@@ -23,7 +23,7 @@ import (
 var version = "v1.1"
 
 var (
-	runners = prometheus.NewGaugeVec(
+	runnersGauge = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "github_runner_status",
 			Help: "runner status",
@@ -31,7 +31,7 @@ var (
 		[]string{"repo", "os", "status", "name", "id"},
 	)
 
-	jobs = prometheus.NewGaugeVec(
+	jobsGauge = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "github_job",
 			Help: "job status",
@@ -39,6 +39,11 @@ var (
 		[]string{"repo", "id", "node_id", "head_branch", "head_sha", "run_number", "event", "status"},
 	)
 )
+
+type runners struct {
+	TotalCount int      `json:"total_count"`
+	Runners    []runner `json:"runners"`
+}
 
 type runner struct {
 	ID     int    `json:"id"`
@@ -90,8 +95,8 @@ func runWeb(ctx *cli.Context) {
 
 // init prometheus metrics
 func init() {
-	prometheus.MustRegister(runners)
-	prometheus.MustRegister(jobs)
+	prometheus.MustRegister(runnersGauge)
+	prometheus.MustRegister(jobsGauge)
 }
 
 func getRunnersFromGithub() {
@@ -99,7 +104,7 @@ func getRunnersFromGithub() {
 
 	for {
 		for _, repo := range config.Github.Repositories {
-			var p []runner
+			var p runners
 			req, _ := http.NewRequest("GET", "https://api.github.com/repos/"+repo+"/actions/runners", nil)
 			req.Header.Set("Authorization", "token "+config.Github.Token)
 			resp, err := client.Do(req)
@@ -110,11 +115,11 @@ func getRunnersFromGithub() {
 			if err != nil {
 				log.Fatal(err)
 			}
-			for _, r := range p {
+			for _, r := range p.Runners {
 				if r.Status == "online" {
-					runners.WithLabelValues(repo, r.OS, r.Status, r.Name, strconv.Itoa(r.ID)).Set(1)
+					runnersGauge.WithLabelValues(repo, r.OS, r.Status, r.Name, strconv.Itoa(r.ID)).Set(1)
 				} else {
-					runners.WithLabelValues(repo, r.OS, r.Status, r.Name, strconv.Itoa(r.ID)).Set(0)
+					runnersGauge.WithLabelValues(repo, r.OS, r.Status, r.Name, strconv.Itoa(r.ID)).Set(0)
 				}
 
 			}
@@ -151,7 +156,7 @@ func getJobsFromGithub() {
 				} else if r.Status == "queued" {
 					s = 4
 				}
-				jobs.WithLabelValues(repo, strconv.Itoa(r.ID), r.NodeID, r.HeadBranch, r.HeadSha, strconv.Itoa(r.RunNumber), r.Event, r.Status).Set(s)
+				jobsGauge.WithLabelValues(repo, strconv.Itoa(r.ID), r.NodeID, r.HeadBranch, r.HeadSha, strconv.Itoa(r.RunNumber), r.Event, r.Status).Set(s)
 			}
 		}
 
