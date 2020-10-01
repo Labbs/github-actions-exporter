@@ -111,6 +111,9 @@ func getRunnersFromGithub() {
 			if err != nil {
 				log.Fatal(err)
 			}
+			if resp.StatusCode != 200 {
+				log.Fatalf("the status code returned by the server is different from 200: %d", resp.StatusCode)
+			}
 			err = json.NewDecoder(resp.Body).Decode(&p)
 			if err != nil {
 				log.Fatal(err)
@@ -140,6 +143,9 @@ func getJobsFromGithub() {
 			resp, err := client.Do(req)
 			if err != nil {
 				log.Fatal(err)
+			}
+			if resp.StatusCode != 200 {
+				log.Fatalf("the status code returned by the server is different from 200: %d", resp.StatusCode)
 			}
 			err = json.NewDecoder(resp.Body).Decode(&p)
 			if err != nil {
