@@ -40,10 +40,10 @@ var (
 	)
 	workflowBillGauge = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
-			Name: "github_workflow_usage",
+			Name: "github_workflow_usage_seconds",
 			Help: "Number of billable seconds used by a specific workflow during the current billing cycle. Any job re-runs are also included in the usage. Only apply to workflows in private repositories that use GitHub-hosted runners.",
 		},
-		[]string{"repo", "id", "node_id", "name", "state", "typeOS"},
+		[]string{"repo", "id", "node_id", "name", "state", "os"},
 	)
 )
 

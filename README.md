@@ -55,3 +55,32 @@ Gauge type
 | os | Operating system (linux/macos/windows) |
 | repo | Repository like \<org>/\<repo> |
 | status | Runner status (online/offline) |
+
+### github_workflow_usage_seconds
+Gauge type
+(If you have private repositories that use GitHub-hosted runners)
+
+**Result possibility**
+
+| Gauge | Description |
+|---|---|
+| seconds | Number of billable seconds used by a specific workflow during the current billing cycle. |
+
+**Fields**
+
+| Name | Description |
+|---|---|
+| id | Workflow id (incremental id) |
+| node_id | Node ID (github actions) |
+| name | workflow name |
+| os | Operating system (linux/macos/windows) |
+| repo | Repository like \<org>/\<repo> |
+| status | Workflow status |
+
+Es:
+
+```
+# HELP github_workflow_usage Number of billable seconds used by a specific workflow during the current billing cycle. Any job re-runs are also included in the usage. Only apply to workflows in private repositories that use GitHub-hosted runners.
+# TYPE github_workflow_usage gauge
+github_workflow_usage_seconds{id="2862037",name="Create Release",node_id="MDg6V29ya2Zsb3cyODYyMDM3",repo="xxx/xxx",state="active",os="UBUNTU"} 706.609
+```
