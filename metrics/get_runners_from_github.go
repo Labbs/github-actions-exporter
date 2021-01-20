@@ -2,7 +2,6 @@ package metrics
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -51,7 +50,6 @@ func GetRunnersFromGithub() {
 			if resp.StatusCode != 200 {
 				log.Fatalf("the status code returned by the server is different from 200: %d", resp.StatusCode)
 			}
-			fmt.Println(resp.Body)
 			err = json.NewDecoder(resp.Body).Decode(&p)
 			if err != nil {
 				log.Fatal(err)
