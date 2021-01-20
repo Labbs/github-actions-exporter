@@ -37,6 +37,7 @@ Gauge type
 | node_id | Node ID (github actions) (mandatory ??) |
 | repo | Repository like \<org>/\<repo> |
 | run_number | Build id for the repo (incremental id => 1/2/3/4/...) |
+| workflow_id | Workflow ID |
 | status | Workflow status (completed/in_progress) |
 
 ### github_runner_status
