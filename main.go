@@ -35,6 +35,7 @@ func main() {
 // runWeb start http server
 func runWeb(ctx *cli.Context) {
 	go metrics.GetRunnersFromGithub()
+	go metrics.GetRunnersOrganizationFromGithub()
 	go metrics.GetJobsFromGithub()
 	go metrics.GetBillableFromGithub()
 
@@ -49,6 +50,7 @@ func runWeb(ctx *cli.Context) {
 // init prometheus metrics
 func init() {
 	prometheus.MustRegister(metrics.RunnersGauge)
+	prometheus.MustRegister(metrics.RunnersOrganizationGauge)
 	prometheus.MustRegister(metrics.JobsGauge)
 	prometheus.MustRegister(metrics.WorkflowBillGauge)
 }
