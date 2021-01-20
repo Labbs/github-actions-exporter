@@ -9,9 +9,10 @@ import (
 
 var (
 	Github struct {
-		Token        string
-		Refresh      int64
-		Repositories cli.StringSlice
+		Token         string
+		Refresh       int64
+		Repositories  cli.StringSlice
+		Organizations cli.StringSlice
 	}
 	Port int
 )
@@ -31,6 +32,12 @@ func NewContext() []cli.Flag {
 			Destination: &Github.Refresh,
 			EnvVar:      "GITHUB_REFRESH",
 			Usage:       "Refresh time Github Pipelines status in sec",
+		},
+		cli.StringSliceFlag{
+			Name:   "github_orgas, go",
+			Value:  &Github.Organizations,
+			EnvVar: "GIHUB_ORGAS",
+			Usage:  "List all organizations you want get informations. Format <orga>,<orga2>,<orga3> (like test,test2)",
 		},
 		cli.StringSliceFlag{
 			Name:   "github_repos, grs",
