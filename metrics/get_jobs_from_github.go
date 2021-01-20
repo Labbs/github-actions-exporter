@@ -18,7 +18,7 @@ var (
 			Name: "github_job",
 			Help: "job status",
 		},
-		[]string{"repo", "id", "node_id", "head_branch", "head_sha", "run_number", "event", "status"},
+		[]string{"repo", "id", "node_id", "head_branch", "head_sha", "run_number", "workflow_id", "event", "status"},
 	)
 )
 
@@ -37,6 +37,7 @@ type job struct {
 	Status     string `json:"status"`
 	Conclusion string `json:"conclusion"`
 	UpdatedAt  string `json:"updated_at"`
+	WorkflowID int    `json:"workflow_id"`
 }
 
 func GetJobsFromGithub() {
@@ -69,7 +70,7 @@ func GetJobsFromGithub() {
 				} else if r.Status == "queued" {
 					s = 4
 				}
-				JobsGauge.WithLabelValues(repo, strconv.Itoa(r.ID), r.NodeID, r.HeadBranch, r.HeadSha, strconv.Itoa(r.RunNumber), r.Event, r.Status).Set(s)
+				JobsGauge.WithLabelValues(repo, strconv.Itoa(r.ID), r.NodeID, r.HeadBranch, r.HeadSha, strconv.Itoa(r.RunNumber), strconv.Itoa(r.WorkflowID), r.Event, r.Status).Set(s)
 			}
 		}
 
