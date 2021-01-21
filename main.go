@@ -19,7 +19,7 @@ import (
 	"github-actions-exporter/metrics"
 )
 
-var version = "v1.4"
+var version = "v1.5"
 
 // main init configuration
 func main() {
@@ -34,6 +34,7 @@ func main() {
 
 // runWeb start http server
 func runWeb(ctx *cli.Context) {
+	go metrics.WorkflowsCache()
 	go metrics.GetRunnersFromGithub()
 	go metrics.GetRunnersOrganizationFromGithub()
 	go metrics.GetJobsFromGithub()
