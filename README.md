@@ -9,8 +9,8 @@ If you want to monitor a public repository, you must put the public_repo option 
 |---|---|---|---|---|
 | Github Token | github_token, gt | GITHUB_TOKEN | - | Personnal Access Token |
 | Github Refresh | github_refresh, gr | GITHUB_REFRESH | 30 | Refresh time Github Actions status in sec |
-| Github Organizations | github_orgas, go | GIHUB_ORGAS | - | List all organizations you want get informations. Format \<orga1>,\<orga2>,\<orga3> (like test1,test2) |
-| Github Repos | github_repos, grs | GIHUB_REPOS | - | List all repositories you want get informations. Format \<orga>/\<repo>,\<orga>/\<repo2>,\<orga>/\<repo3> (like test/test) |
+| Github Organizations | github_orgas, go | GITHUB_ORGAS | - | List all organizations you want get informations. Format \<orga1>,\<orga2>,\<orga3> (like test1,test2) |
+| Github Repos | github_repos, grs | GITHUB_REPOS | - | List all repositories you want get informations. Format \<orga>/\<repo>,\<orga>/\<repo2>,\<orga>/\<repo3> (like test/test) |
 | Exporter port | port, p | PORT | 9999 | Exporter port |
 
 ## Exported stats
