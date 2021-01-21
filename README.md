@@ -62,6 +62,27 @@ Gauge type
 | repo | Repository like \<org>/\<repo> |
 | status | Runner status (online/offline) |
 
+### github_runner_organization_status
+Gauge type
+(If you have self hosted runner for an organization)
+
+**Result possibility**
+
+| ID | Description |
+|---|---|
+| 0 | Offline |
+| 1 | Online |
+
+**Fields**
+
+| Name | Description |
+|---|---|
+| id | Runner id (incremental id) |
+| name | Runner name |
+| os | Operating system (linux/macos/windows) |
+| orga | Organization name |
+| status | Runner status (online/offline) |
+
 ### github_workflow_usage_seconds
 Gauge type
 (If you have private repositories that use GitHub-hosted runners)
