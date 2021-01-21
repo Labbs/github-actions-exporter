@@ -22,19 +22,6 @@ var (
 	)
 )
 
-type workflowsReturn struct {
-	TotalCount int        `json:"total_count"`
-	Workflows  []workflow `json:"workflows"`
-}
-
-type workflow struct {
-	ID     int    `json:"id"`
-	NodeID string `json:"node_id"`
-	Name   string `json:"name"`
-	Path   string `json:"path"`
-	State  string `json:"state"`
-}
-
 type UBUNTU struct {
 	TotalMs float64 `json:"total_ms"`
 }
@@ -59,41 +46,25 @@ func GetBillableFromGithub() {
 	client := &http.Client{}
 	for {
 		for _, repo := range config.Github.Repositories {
-			var p workflowsReturn
-			req, _ := http.NewRequest("GET", "https://api.github.com/repos/"+repo+"/actions/workflows", nil)
-			req.Header.Set("Authorization", "token "+config.Github.Token)
-			resp, err := client.Do(req)
-			defer resp.Body.Close()
-			if err != nil {
-				log.Fatal(err)
-			}
-			if resp.StatusCode != 200 {
-				log.Fatalf("the status code returned by the server is different from 200: %d", resp.StatusCode)
-			}
-			err = json.NewDecoder(resp.Body).Decode(&p)
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			for _, w := range p.Workflows {
+			for k, v := range workflows[repo] {
 				var bill Bill
-				req, _ := http.NewRequest("GET", "https://api.github.com/repos/"+repo+"/actions/workflows/"+strconv.Itoa(w.ID)+"/timing", nil)
+				req, _ := http.NewRequest("GET", "https://api.github.com/repos/"+repo+"/actions/workflows/"+strconv.Itoa(k)+"/timing", nil)
 				req.Header.Set("Authorization", "token "+config.Github.Token)
-				resp2, err := client.Do(req)
-				defer resp2.Body.Close()
+				resp, err := client.Do(req)
+				defer resp.Body.Close()
 				if err != nil {
 					log.Fatal(err)
 				}
 				if resp.StatusCode != 200 {
 					log.Fatalf("the status code returned by the server is different from 200: %d", resp.StatusCode)
 				}
-				err = json.NewDecoder(resp2.Body).Decode(&bill)
+				err = json.NewDecoder(resp.Body).Decode(&bill)
 				if err != nil {
 					log.Fatal(err)
 				}
-				WorkflowBillGauge.WithLabelValues(repo, strconv.Itoa(w.ID), w.NodeID, w.Name, w.State, "MACOS").Set(bill.Billable.MACOS.TotalMs / 1000)
-				WorkflowBillGauge.WithLabelValues(repo, strconv.Itoa(w.ID), w.NodeID, w.Name, w.State, "WINDOWS").Set(bill.Billable.WINDOWS.TotalMs / 1000)
-				WorkflowBillGauge.WithLabelValues(repo, strconv.Itoa(w.ID), w.NodeID, w.Name, w.State, "UBUNTU").Set(bill.Billable.UBUNTU.TotalMs / 1000)
+				WorkflowBillGauge.WithLabelValues(repo, strconv.Itoa(v.ID), v.NodeID, v.Name, v.State, "MACOS").Set(bill.Billable.MACOS.TotalMs / 1000)
+				WorkflowBillGauge.WithLabelValues(repo, strconv.Itoa(v.ID), v.NodeID, v.Name, v.State, "WINDOWS").Set(bill.Billable.WINDOWS.TotalMs / 1000)
+				WorkflowBillGauge.WithLabelValues(repo, strconv.Itoa(v.ID), v.NodeID, v.Name, v.State, "UBUNTU").Set(bill.Billable.UBUNTU.TotalMs / 1000)
 			}
 		}
 
