@@ -38,6 +38,7 @@ Gauge type
 | repo | Repository like \<org>/\<repo> |
 | run_number | Build id for the repo (incremental id => 1/2/3/4/...) |
 | workflow_id | Workflow ID |
+| workflow | Workflow Name |
 | status | Workflow status (completed/in_progress) |
 
 ### github_runner_status
