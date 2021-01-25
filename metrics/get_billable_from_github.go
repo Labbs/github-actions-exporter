@@ -51,10 +51,10 @@ func GetBillableFromGithub() {
 				req, _ := http.NewRequest("GET", "https://api.github.com/repos/"+repo+"/actions/workflows/"+strconv.Itoa(k)+"/timing", nil)
 				req.Header.Set("Authorization", "token "+config.Github.Token)
 				resp, err := client.Do(req)
-				defer resp.Body.Close()
 				if err != nil {
 					log.Fatal(err)
 				}
+				defer resp.Body.Close()
 				if resp.StatusCode != 200 {
 					log.Fatalf("the status code returned by the server is different from 200: %d", resp.StatusCode)
 				}
