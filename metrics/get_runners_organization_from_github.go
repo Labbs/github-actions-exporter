@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/google/go-github/v33/github"
@@ -45,7 +46,7 @@ func GetRunnersOrganizationFromGithub() {
 	                                log.Fatal(err)
 	                        }
 				for _, r := range runners.Runners {
-					if r.GetStatus() == "online" {
+					if strings.ToLower(r.GetStatus()) == "online" {
 						RunnersOrganizationGauge.WithLabelValues(orga, r.GetOS(), r.GetName(), strconv.Itoa(int(r.GetID()))).Set(1)
 					} else {
 						RunnersOrganizationGauge.WithLabelValues(orga, r.GetOS(), r.GetName(), strconv.Itoa(int(r.GetID()))).Set(0)
