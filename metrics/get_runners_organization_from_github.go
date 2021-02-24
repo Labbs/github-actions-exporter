@@ -1,15 +1,18 @@
 package metrics
 
 import (
-	"encoding/json"
+	"context"
 	"log"
-	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/google/go-github/v33/github"
 
 	"github-actions-exporter/config"
 
 	"github.com/prometheus/client_golang/prometheus"
+
+	"golang.org/x/oauth2"
 )
 
 var (
@@ -18,42 +21,40 @@ var (
 			Name: "github_runner_organization_status",
 			Help: "runner status",
 		},
-		[]string{"organization", "os", "status", "name", "id"},
+		[]string{"organization", "os", "name", "id"},
 	)
 )
 
-type runnersOrganization struct {
-	TotalCount int      `json:"total_count"`
-	Runners    []runner `json:"runners"`
-}
-
 // GetRunnersOrganizationFromGithub - get runners status
 func GetRunnersOrganizationFromGithub() {
-	client := &http.Client{}
+	ctx := context.Background()
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: config.Github.Token},
+	)
+	tc := oauth2.NewClient(ctx, ts)
+
+	client := github.NewClient(tc)
+
+	opt := &github.ListOptions{PerPage: 10}
 
 	for {
 		for _, orga := range config.Github.Organizations {
-			var p runnersOrganization
-			req, _ := http.NewRequest("GET", "https://api.github.com/orgs/"+orga+"/actions/runners", nil)
-			req.Header.Set("Authorization", "token "+config.Github.Token)
-			resp, err := client.Do(req)
-			if err != nil {
-				log.Fatal(err)
-			}
-			if resp.StatusCode != 200 {
-				log.Fatalf("the status code returned by the server is different from 200: %d", resp.StatusCode)
-			}
-			err = json.NewDecoder(resp.Body).Decode(&p)
-			if err != nil {
-				log.Fatal(err)
-			}
-			for _, r := range p.Runners {
-				if r.Status == "online" {
-					RunnersOrganizationGauge.WithLabelValues(orga, r.OS, r.Status, r.Name, strconv.Itoa(r.ID)).Set(1)
-				} else {
-					RunnersOrganizationGauge.WithLabelValues(orga, r.OS, r.Status, r.Name, strconv.Itoa(r.ID)).Set(0)
+			for {
+	                        runners, resp, err := client.Actions.ListOrganizationRunners(ctx, orga, opt)
+	                        if err != nil {
+	                                log.Fatal(err)
+	                        }
+				for _, r := range runners.Runners {
+					if r.GetStatus() == "online" {
+						RunnersOrganizationGauge.WithLabelValues(orga, r.GetOS(), r.GetName(), strconv.Itoa(int(r.GetID()))).Set(1)
+					} else {
+						RunnersOrganizationGauge.WithLabelValues(orga, r.GetOS(), r.GetName(), strconv.Itoa(int(r.GetID()))).Set(0)
+					}
 				}
-
+                                if resp.NextPage == 0 {
+                                        break
+                                }
+                                opt.Page = resp.NextPage
 			}
 		}
 

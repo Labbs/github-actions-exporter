@@ -18,7 +18,7 @@ var (
 			Name: "github_runner_status",
 			Help: "runner status",
 		},
-		[]string{"repo", "os", "status", "name", "id"},
+		[]string{"repo", "os", "name", "id"},
 	)
 )
 
@@ -56,9 +56,9 @@ func GetRunnersFromGithub() {
 			}
 			for _, r := range p.Runners {
 				if r.Status == "online" {
-					RunnersGauge.WithLabelValues(repo, r.OS, r.Status, r.Name, strconv.Itoa(r.ID)).Set(1)
+					RunnersGauge.WithLabelValues(repo, r.OS, r.Name, strconv.Itoa(r.ID)).Set(1)
 				} else {
-					RunnersGauge.WithLabelValues(repo, r.OS, r.Status, r.Name, strconv.Itoa(r.ID)).Set(0)
+					RunnersGauge.WithLabelValues(repo, r.OS, r.Name, strconv.Itoa(r.ID)).Set(0)
 				}
 
 			}
