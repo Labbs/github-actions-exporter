@@ -13,7 +13,7 @@ var (
 		Refresh       int64
 		Repositories  cli.StringSlice
 		Organizations cli.StringSlice
-		ApiUrl	string
+		ApiUri	string
 	}
 	Port int
 )
@@ -49,7 +49,7 @@ func NewContext() []cli.Flag {
 		cli.StringFlag{
 			Name:        "github_api_uri, uri",
 			Value:       "api.github.com",
-			Destination: &Github.ApiUrl,
+			Destination: &Github.ApiUri,
 			EnvVar:      "GITHUB_API_URI",
 			Usage:       "Github API URI (primarily designed for Github Enterprise use cases)",
 		},
