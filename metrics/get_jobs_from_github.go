@@ -46,7 +46,7 @@ func GetJobsFromGithub() {
 	for {
 		for _, repo := range config.Github.Repositories {
 			var p jobsReturn
-			req, _ := http.NewRequest("GET", "https://"+config.Github.ApiUri+"/repos/"+repo+"/actions/runs", nil)
+			req, _ := http.NewRequest("GET", "https://"+config.Github.ApiUrl+"/repos/"+repo+"/actions/runs", nil)
 			req.Header.Set("Authorization", "token "+config.Github.Token)
 			resp, err := client.Do(req)
 			if err != nil {

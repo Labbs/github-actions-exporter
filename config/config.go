@@ -13,7 +13,7 @@ var (
 		Refresh       int64
 		Repositories  cli.StringSlice
 		Organizations cli.StringSlice
-		ApiUri	string
+		ApiUrl	string
 	}
 	Port int
 )
@@ -47,11 +47,11 @@ func NewContext() []cli.Flag {
 			Usage:  "List all repositories you want get informations. Format <orga>/<repo>,<orga>/<repo2>,<orga>/<repo3> (like test/test)",
 		},
 		cli.StringFlag{
-			Name:        "github_api_uri, uri",
+			Name:        "github_api_url, url",
 			Value:       "api.github.com",
-			Destination: &Github.ApiUri,
-			EnvVar:      "GITHUB_API_URI",
-			Usage:       "Github API URI (primarily designed for Github Enterprise use cases)",
+			Destination: &Github.ApiUrl,
+			EnvVar:      "GITHUB_API_URL",
+			Usage:       "Github API URL (primarily designed for Github Enterprise use cases)",
 		},
 		cli.IntFlag{
 			Name:        "port, p",
