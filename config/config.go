@@ -50,7 +50,7 @@ func NewContext() []cli.Flag {
 			Name:        "github_api_uri, uri",
 			Value:       "api.github.com",
 			Destination: &Github.ApiUrl,
-			EnvVar:      "GITHUB_API_URL",
+			EnvVar:      "GITHUB_API_URI",
 			Usage:       "Github API URI (primarily designed for Github Enterprise use cases)",
 		},
 		cli.IntFlag{
