@@ -19,7 +19,7 @@ import (
 	"github-actions-exporter/metrics"
 )
 
-var version = "v1.5.2"
+var version = "v1.6.0"
 
 // main init configuration
 func main() {
@@ -44,8 +44,15 @@ func runWeb(ctx *cli.Context) {
 		fmt.Fprintf(w, "/metrics")
 	})
 	http.Handle("/metrics", promhttp.Handler())
+
+	http.HandleFunc("/health", health)
+
 	log.Printf("starting exporter with port %v", config.Port)
 	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(config.Port), nil))
+}
+
+func health(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusNoContent)
 }
 
 // init prometheus metrics

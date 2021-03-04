@@ -13,6 +13,7 @@ var (
 		Refresh       int64
 		Repositories  cli.StringSlice
 		Organizations cli.StringSlice
+		ApiUrl	string
 	}
 	Port int
 )
@@ -24,7 +25,7 @@ func NewContext() []cli.Flag {
 			Name:        "github_token, gt",
 			Destination: &Github.Token,
 			EnvVar:      "GITHUB_TOKEN",
-			Usage:       "Github Personnal Token",
+			Usage:       "Github Personal Token",
 		},
 		cli.Int64Flag{
 			Name:        "github_refresh, gr",
@@ -44,6 +45,13 @@ func NewContext() []cli.Flag {
 			Value:  &Github.Repositories,
 			EnvVar: "GITHUB_REPOS",
 			Usage:  "List all repositories you want get informations. Format <orga>/<repo>,<orga>/<repo2>,<orga>/<repo3> (like test/test)",
+		},
+		cli.StringFlag{
+			Name:        "github_api_uri, uri",
+			Value:       "api.github.com",
+			Destination: &Github.ApiUrl,
+			EnvVar:      "GITHUB_API_URL",
+			Usage:       "Github API URI (primarily designed for Github Enterprise use cases)",
 		},
 		cli.IntFlag{
 			Name:        "port, p",
