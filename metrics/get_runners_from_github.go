@@ -47,6 +47,7 @@ func GetRunnersFromGithub() {
 			if err != nil {
 				log.Fatal(err)
 			}
+			defer resp.Body.Close()
 			if resp.StatusCode != 200 {
 				log.Fatalf("the status code returned by the server for runners in repo %s is different from 200: %d", repo, resp.StatusCode)
 			}
