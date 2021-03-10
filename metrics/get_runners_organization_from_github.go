@@ -34,7 +34,7 @@ func GetRunnersOrganizationFromGithub() {
 	for {
 		for _, orga := range config.Github.Organizations {
 			var p runnersOrganization
-			req, _ := http.NewRequest("GET", "https://api.github.com/orgs/"+orga+"/actions/runners", nil)
+			req, _ := http.NewRequest("GET", "https://"+config.Github.ApiUrl+"/orgs/"+orga+"/actions/runners", nil)
 			req.Header.Set("Authorization", "token "+config.Github.Token)
 			resp, err := client.Do(req)
 			if err != nil {

@@ -41,7 +41,7 @@ func GetRunnersFromGithub() {
 	for {
 		for _, repo := range config.Github.Repositories {
 			var p runners
-			req, _ := http.NewRequest("GET", "https://api.github.com/repos/"+repo+"/actions/runners", nil)
+			req, _ := http.NewRequest("GET", "https://"+config.Github.ApiUrl+"/repos/"+repo+"/actions/runners", nil)
 			req.Header.Set("Authorization", "token "+config.Github.Token)
 			resp, err := client.Do(req)
 			if err != nil {

@@ -19,7 +19,7 @@ import (
 	"github-actions-exporter/metrics"
 )
 
-var version = "v1.5.2"
+var version = "v1.6.0"
 
 // main init configuration
 func main() {
