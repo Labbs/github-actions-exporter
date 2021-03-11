@@ -1,6 +1,11 @@
 # github-actions-exporter
 github-actions-exporter for prometheus
 
+![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/spendeskplatform/github-actions-exporter)
+![Docker Pulls](https://img.shields.io/docker/pulls/spendeskplatform/github-actions-exporter)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Spendesk/github-actions-exporter)](https://goreportcard.com/report/github.com/Spendesk/github-actions-exporter)
+
+
 ## Information
 If you want to monitor a public repository, you must put the public_repo option in the repo scope of your github token.
 
