@@ -41,21 +41,21 @@ func GetRunnersOrganizationFromGithub() {
 	for {
 		for _, orga := range config.Github.Organizations {
 			for {
-	      runners, resp, err := client.Actions.ListOrganizationRunners(ctx, orga, opt)
-	      if err != nil {
-          log.Fatal(err)
-        }
-				for _, r := range runners.Runners {
+				runners, resp, err := client.Actions.ListOrganizationRunners(ctx, orga, opt)
+				if err != nil {
+					log.Fatal(err)
+				}
+			        for _, r := range runners.Runners {
 					if strings.ToLower(r.GetStatus()) == "online" {
 						RunnersOrganizationGauge.WithLabelValues(orga, r.GetOS(), r.GetName(), strconv.Itoa(int(r.GetID()))).Set(1)
 					} else {
 						RunnersOrganizationGauge.WithLabelValues(orga, r.GetOS(), r.GetName(), strconv.Itoa(int(r.GetID()))).Set(0)
 					}
 				}
-        if resp.NextPage == 0 {
-          break
-        }
-        opt.Page = resp.NextPage
+				if resp.NextPage == 0 {
+					break
+			        }
+				opt.Page = resp.NextPage
 			}
 		}
 
