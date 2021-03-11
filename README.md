@@ -111,3 +111,19 @@ Es:
 # TYPE github_workflow_usage gauge
 github_workflow_usage_seconds{id="2862037",name="Create Release",node_id="MDg6V29ya2Zsb3cyODYyMDM3",repo="xxx/xxx",state="active",os="UBUNTU"} 706.609
 ```
+
+
+## Github Token configuration
+
+Scopes needed configuration for the Github token
+
+```
+repo
+  - repo:status
+  - repo_deployment
+  - public_repo
+
+admin:org
+  - write:org
+  - read:org
+```
