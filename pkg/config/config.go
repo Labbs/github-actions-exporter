@@ -10,7 +10,8 @@ var (
 		Organizations cli.StringSlice
 		ApiUrl        string
 	}
-	Port int
+	Port  int
+	Debug bool
 )
 
 // InitConfiguration => set configuration from env vars or command parameters
@@ -60,6 +61,12 @@ func InitConfiguration() []cli.Flag {
 			EnvVars:     []string{"GITHUB_REPOS"},
 			Usage:       "List all repositories you want get informations. Format <orga>/<repo>,<orga>/<repo2>,<orga>/<repo3> (like test/test)",
 			Destination: &Github.Repositories,
+		},
+		&cli.BoolFlag{
+			Name:        "debug_profile",
+			EnvVars:     []string{"DEBUG_PROFILE"},
+			Usage:       "Expose pprof information on /debug/pprof/",
+			Destination: &Debug,
 		},
 	}
 }
