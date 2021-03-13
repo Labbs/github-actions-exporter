@@ -37,7 +37,7 @@ func runWeb(ctx *cli.Context) {
 	go metrics.WorkflowsCache()
 	go metrics.GetRunnersFromGithub()
 	go metrics.GetRunnersOrganizationFromGithub()
-	go metrics.GetJobsFromGithub()
+	go metrics.GetWorkflowRunsFromGithub()
 	go metrics.GetBillableFromGithub()
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -52,6 +52,8 @@ func runWeb(ctx *cli.Context) {
 func init() {
 	prometheus.MustRegister(metrics.RunnersGauge)
 	prometheus.MustRegister(metrics.RunnersOrganizationGauge)
-	prometheus.MustRegister(metrics.JobsGauge)
+	prometheus.MustRegister(metrics.WorkflowRunStatusGauge)
+	prometheus.MustRegister(metrics.WorkflowRunStatusDeprecatedGauge)
+	prometheus.MustRegister(metrics.WorkflowRunDurationGauge)
 	prometheus.MustRegister(metrics.WorkflowBillGauge)
 }

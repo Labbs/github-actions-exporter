@@ -34,14 +34,14 @@ func GetRunnersOrganizationFromGithub() {
 	for {
 		for _, orga := range config.Github.Organizations {
 			var p runnersOrganization
-			req, _ := http.NewRequest("GET", "https://api.github.com/orgs/"+orga+"/actions/runners", nil)
+			req, _ := http.NewRequest("GET", "https://"+config.Github.ApiUrl+"/orgs/"+orga+"/actions/runners", nil)
 			req.Header.Set("Authorization", "token "+config.Github.Token)
 			resp, err := client.Do(req)
 			if err != nil {
 				log.Fatal(err)
 			}
 			if resp.StatusCode != 200 {
-				log.Fatalf("the status code returned by the server is different from 200: %d", resp.StatusCode)
+				log.Fatalf("the status code returned by the server for runners in organization %s is different from 200: %d", orga, resp.StatusCode)
 			}
 			err = json.NewDecoder(resp.Body).Decode(&p)
 			if err != nil {

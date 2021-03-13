@@ -29,15 +29,16 @@ func WorkflowsCache() {
 	for {
 		for _, repo := range config.Github.Repositories {
 			var p workflowsReturn
-			req, _ := http.NewRequest("GET", "https://api.github.com/repos/"+repo+"/actions/workflows", nil)
+			req, _ := http.NewRequest("GET", "https://"+config.Github.ApiUrl+"/repos/"+repo+"/actions/workflows", nil)
 			req.Header.Set("Authorization", "token "+config.Github.Token)
 			resp, err := client.Do(req)
 			defer resp.Body.Close()
 			if err != nil {
 				log.Fatal(err)
 			}
+
 			if resp.StatusCode != 200 {
-				log.Fatalf("the status code returned by the server is different from 200: %d", resp.StatusCode)
+				log.Fatalf("the status code returned by the server for workflows in repo %s is different from 200: %d", repo, resp.StatusCode)
 			}
 			err = json.NewDecoder(resp.Body).Decode(&p)
 			if err != nil {
