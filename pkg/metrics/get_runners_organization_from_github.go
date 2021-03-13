@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/google/go-github/v33/github"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -16,23 +17,30 @@ var (
 			Name: "github_runner_organization_status",
 			Help: "runner status",
 		},
-		[]string{"organization", "os", "status", "name", "id"},
+		[]string{"organization", "os", "name", "id"},
 	)
 )
 
 func getRunnersOrganizationFromGithub() {
+	opt := &github.ListOptions{PerPage: 10}
 	for {
 		for _, orga := range config.Github.Organizations.Value() {
-			resp, _, err := client.Actions.ListOrganizationRunners(context.Background(), orga, nil)
-			if err != nil {
-				log.Printf("ListOrganizationRunners error for %s: %s", orga, err.Error())
-			} else {
-				for _, runner := range resp.Runners {
-					if runner.GetStatus() == "online" {
-						runnersOrganizationGauge.WithLabelValues(orga, *runner.OS, *runner.Status, *runner.Name, strconv.FormatInt(runner.GetID(), 10)).Set(1)
-					} else {
-						runnersOrganizationGauge.WithLabelValues(orga, *runner.OS, *runner.Status, *runner.Name, strconv.FormatInt(runner.GetID(), 10)).Set(0)
+			for {
+				resp, rr, err := client.Actions.ListOrganizationRunners(context.Background(), orga, opt)
+				if err != nil {
+					log.Printf("ListOrganizationRunners error for %s: %s", orga, err.Error())
+				} else {
+					for _, runner := range resp.Runners {
+						if runner.GetStatus() == "online" {
+							runnersOrganizationGauge.WithLabelValues(orga, *runner.OS, *runner.Name, strconv.FormatInt(runner.GetID(), 10)).Set(1)
+						} else {
+							runnersOrganizationGauge.WithLabelValues(orga, *runner.OS, *runner.Name, strconv.FormatInt(runner.GetID(), 10)).Set(0)
+						}
 					}
+					if rr.NextPage == 0 {
+						break
+					}
+					opt.Page = rr.NextPage
 				}
 			}
 		}
