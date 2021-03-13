@@ -1,59 +1,28 @@
-/*
-Main application package
-*/
 package main
 
 import (
-	"fmt"
 	"log"
-	"net/http"
 	"os"
-	"strconv"
 
-	"github.com/prometheus/client_golang/prometheus"
+	"github.com/urfave/cli/v2"
 
-	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/urfave/cli"
-
-	"github-actions-exporter/config"
-	"github-actions-exporter/metrics"
+	"github-actions-exporter/pkg/config"
+	"github-actions-exporter/pkg/server"
 )
 
-var version = "v1.6.0"
+var (
+	version = "development"
+)
 
-// main init configuration
 func main() {
 	app := cli.NewApp()
 	app.Name = "github-actions-exporter"
-	app.Flags = config.NewContext()
-	app.Action = runWeb
+	app.Flags = config.InitConfiguration()
 	app.Version = version
+	app.Action = server.RunServer
 
-	app.Run(os.Args)
-}
-
-// runWeb start http server
-func runWeb(ctx *cli.Context) {
-	go metrics.WorkflowsCache()
-	go metrics.GetRunnersFromGithub()
-	go metrics.GetRunnersOrganizationFromGithub()
-	go metrics.GetWorkflowRunsFromGithub()
-	go metrics.GetBillableFromGithub()
-
-	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "/metrics")
-	})
-	http.Handle("/metrics", promhttp.Handler())
-	log.Printf("starting exporter with port %v", config.Port)
-	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(config.Port), nil))
-}
-
-// init prometheus metrics
-func init() {
-	prometheus.MustRegister(metrics.RunnersGauge)
-	prometheus.MustRegister(metrics.RunnersOrganizationGauge)
-	prometheus.MustRegister(metrics.WorkflowRunStatusGauge)
-	prometheus.MustRegister(metrics.WorkflowRunStatusDeprecatedGauge)
-	prometheus.MustRegister(metrics.WorkflowRunDurationGauge)
-	prometheus.MustRegister(metrics.WorkflowBillGauge)
+	err := app.Run(os.Args)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
