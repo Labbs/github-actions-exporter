@@ -1,6 +1,12 @@
 # github-actions-exporter
 github-actions-exporter for prometheus
 
+![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/spendeskplatform/github-actions-exporter)
+![Docker Pulls](https://img.shields.io/docker/pulls/spendeskplatform/github-actions-exporter)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Spendesk/github-actions-exporter)](https://goreportcard.com/report/github.com/Spendesk/github-actions-exporter)
+
+Container image : https://hub.docker.com/repository/docker/spendeskplatform/github-actions-exporter
+
 ## Information
 If you want to monitor a public repository, you must put the public_repo option in the repo scope of your github token.
 
@@ -12,10 +18,11 @@ If you want to monitor a public repository, you must put the public_repo option 
 | Github Organizations | github_orgas, go | GITHUB_ORGAS | - | List all organizations you want get informations. Format \<orga1>,\<orga2>,\<orga3> (like test1,test2) |
 | Github Repos | github_repos, grs | GITHUB_REPOS | - | List all repositories you want get informations. Format \<orga>/\<repo>,\<orga>/\<repo2>,\<orga>/\<repo3> (like test/test) |
 | Exporter port | port, p | PORT | 9999 | Exporter port |
+| Github Api URL | github_api_url, url | GITHUB_API_URL | api.github.com | Github API URL (primarily for Github Enterprise usage) |
 
 ## Exported stats
 
-### github_job
+### github_workflow_run_status
 Gauge type
 
 **Result possibility**
@@ -40,6 +47,32 @@ Gauge type
 | workflow_id | Workflow ID |
 | workflow | Workflow Name |
 | status | Workflow status (completed/in_progress) |
+
+### github_workflow_run_duration_ms
+Gauge type
+
+**Result possibility**
+
+| Gauge | Description |
+|---|---|
+| milliseconds | Number of milliseconds that a specific workflow run took time to complete. |
+
+**Fields**
+
+| Name | Description |
+|---|---|
+| event | Event type like push/pull_request/...|
+| head_branch | Branch name |
+| head_sha | Commit ID |
+| node_id | Node ID (github actions) (mandatory ??) |
+| repo | Repository like \<org>/\<repo> |
+| run_number | Build id for the repo (incremental id => 1/2/3/4/...) |
+| workflow_id | Workflow ID |
+| workflow | Workflow Name |
+| status | Workflow status (completed/in_progress) |
+
+### github_job
+> :warning: **This is a duplicate of the `github_workflow_run_status` metric that will soon be deprecated, do not use anymore.**
 
 ### github_runner_status
 Gauge type
@@ -104,7 +137,7 @@ Gauge type
 | repo | Repository like \<org>/\<repo> |
 | status | Workflow status |
 
-Es:
+Example:
 
 ```
 # HELP github_workflow_usage Number of billable seconds used by a specific workflow during the current billing cycle. Any job re-runs are also included in the usage. Only apply to workflows in private repositories that use GitHub-hosted runners.

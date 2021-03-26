@@ -14,10 +14,14 @@ jobs:
       - uses: actions/checkout@master
       - uses: actions/setup-go@v2
         with:
-          go-version: '1.15'
+          go-version: '1.16'
+
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
       - name: Build
-        run: CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o github-actions-exporter
+        run: CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags="-X 'main.version=${{ steps.get_version.outputs.VERSION }}'" -o github-actions-exporter
 
       - name: Create Release
         id: create_release
