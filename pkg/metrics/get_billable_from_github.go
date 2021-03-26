@@ -21,6 +21,7 @@ var (
 	)
 )
 
+// getBillableFromGithub - return billable informations for MACOS, WINDOWS and UBUNTU runners.
 func getBillableFromGithub() {
 	for {
 		for _, repo := range config.Github.Repositories.Value() {

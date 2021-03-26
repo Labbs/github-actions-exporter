@@ -21,6 +21,7 @@ var (
 	)
 )
 
+// getRunnersOrganizationFromGithub - return information about runners and their status for an organization
 func getRunnersOrganizationFromGithub() {
 	opt := &github.ListOptions{PerPage: 10}
 	for {
