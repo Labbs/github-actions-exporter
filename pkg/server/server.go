@@ -12,6 +12,7 @@ import (
 	"github-actions-exporter/pkg/metrics"
 )
 
+// RunServer - run http server for expose metrics
 func RunServer(ctx *cli.Context) error {
 	metrics.InitMetrics()
 

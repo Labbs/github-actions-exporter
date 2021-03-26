@@ -16,6 +16,7 @@ var (
 	err    error
 )
 
+// InitMetrics - register metrics in prometheus lib and start func for monitor
 func InitMetrics() {
 	prometheus.MustRegister(runnersGauge)
 	prometheus.MustRegister(runnersOrganizationGauge)

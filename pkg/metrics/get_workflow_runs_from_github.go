@@ -35,6 +35,7 @@ var (
 	)
 )
 
+// getWorkflowRunsFromGithub - return informations and status about a worflow
 func getWorkflowRunsFromGithub() {
 	for {
 		for _, repo := range config.Github.Repositories.Value() {

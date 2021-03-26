@@ -18,6 +18,7 @@ var (
 	index   = fasthttpadaptor.NewFastHTTPHandlerFunc(pprof.Index)
 )
 
+// prometheusHandler - fastHTTP handler for prometheus metrics
 func prometheusHandler() fasthttp.RequestHandler {
 	return fasthttpadaptor.NewFastHTTPHandler(promhttp.Handler())
 }

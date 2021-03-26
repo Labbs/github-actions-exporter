@@ -14,7 +14,7 @@ var (
 	Debug bool
 )
 
-// InitConfiguration => set configuration from env vars or command parameters
+// InitConfiguration - set configuration from env vars or command parameters
 func InitConfiguration() []cli.Flag {
 	return []cli.Flag{
 		&cli.IntFlag{

@@ -15,6 +15,7 @@ var (
 	workflows map[string]map[int64]github.Workflow
 )
 
+// workflowCache - used for limit calls to github api
 func workflowCache() {
 	for {
 		ww := make(map[string]map[int64]github.Workflow)
