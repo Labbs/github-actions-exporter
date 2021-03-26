@@ -1,9 +1,8 @@
-FROM golang:1.15 as builder
-
+FROM golang:1.16 as builder
 
 WORKDIR /app
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o bin/app
+RUN bash ./build.sh
 
 FROM alpine:latest as release
 RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
