@@ -41,10 +41,10 @@ func InitMetrics() {
 		Transport: transport,
 	}
 
-	if config.Github.ApiUrl == "api.github.com" {
+	if config.Github.APIURL == "api.github.com" {
 		client = github.NewClient(httpClient)
 	} else {
-		client, err = github.NewEnterpriseClient(config.Github.ApiUrl, config.Github.ApiUrl, httpClient)
+		client, err = github.NewEnterpriseClient(config.Github.APIURL, config.Github.APIURL, httpClient)
 		if err != nil {
 			log.Fatalln("Github enterprise init error: " + err.Error())
 		}

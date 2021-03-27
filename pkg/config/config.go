@@ -3,14 +3,17 @@ package config
 import "github.com/urfave/cli/v2"
 
 var (
+	// Github - github configuration
 	Github struct {
 		Token         string
 		Refresh       int64
 		Repositories  cli.StringSlice
 		Organizations cli.StringSlice
-		ApiUrl        string
+		APIURL        string
 	}
-	Port  int
+	// Port - http port used by fasthttp
+	Port int
+	// Debug - option for debug the exporter
 	Debug bool
 )
 
@@ -46,7 +49,7 @@ func InitConfiguration() []cli.Flag {
 			EnvVars:     []string{"GITHUB_API_URL"},
 			Value:       "api.github.com",
 			Usage:       "Github API URL (primarily designed for Github Enterprise use cases)",
-			Destination: &Github.ApiUrl,
+			Destination: &Github.APIURL,
 		},
 		&cli.StringSliceFlag{
 			Name:        "github_orgas",
