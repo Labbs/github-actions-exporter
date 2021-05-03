@@ -2,11 +2,12 @@ package metrics
 
 import (
 	"context"
-	"github-actions-exporter/pkg/config"
 	"log"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/Spendesk/github-actions-exporter/pkg/config"
 
 	"github.com/prometheus/client_golang/prometheus"
 )

@@ -8,7 +8,7 @@ import (
 
 	"github.com/google/go-github/v33/github"
 
-	"github-actions-exporter/pkg/config"
+	"github.com/Spendesk/github-actions-exporter/pkg/config"
 )
 
 var (

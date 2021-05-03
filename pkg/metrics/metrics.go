@@ -1,9 +1,10 @@
 package metrics
 
 import (
-	"github-actions-exporter/pkg/config"
 	"log"
 	"net/http"
+
+	"github.com/Spendesk/github-actions-exporter/pkg/config"
 
 	"github.com/google/go-github/v33/github"
 	"github.com/gregjones/httpcache"
