@@ -2,10 +2,11 @@ package metrics
 
 import (
 	"context"
-	"github-actions-exporter/pkg/config"
 	"log"
 	"strconv"
 	"time"
+
+	"github.com/Spendesk/github-actions-exporter/pkg/config"
 
 	"github.com/google/go-github/v33/github"
 	"github.com/prometheus/client_golang/prometheus"
@@ -16,6 +17,13 @@ var (
 		prometheus.GaugeOpts{
 			Name: "github_runner_organization_status",
 			Help: "runner status",
+		},
+		[]string{"organization", "os", "name", "id"},
+	)
+	runnersOrganizationBusyGauge = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "github_runner_organization_busy",
+			Help: "runner busy status",
 		},
 		[]string{"organization", "os", "name", "id"},
 	)
@@ -36,6 +44,11 @@ func getRunnersOrganizationFromGithub() {
 							runnersOrganizationGauge.WithLabelValues(orga, *runner.OS, *runner.Name, strconv.FormatInt(runner.GetID(), 10)).Set(1)
 						} else {
 							runnersOrganizationGauge.WithLabelValues(orga, *runner.OS, *runner.Name, strconv.FormatInt(runner.GetID(), 10)).Set(0)
+						}
+						if runner.GetBusy() {
+							runnersOrganizationBusyGauge.WithLabelValues(orga, *runner.OS, *runner.Name, strconv.FormatInt(runner.GetID(), 10)).Set(1)
+						} else {
+							runnersOrganizationBusyGauge.WithLabelValues(orga, *runner.OS, *runner.Name, strconv.FormatInt(runner.GetID(), 10)).Set(0)
 						}
 					}
 					if rr.NextPage == 0 {

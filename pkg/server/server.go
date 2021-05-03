@@ -8,8 +8,8 @@ import (
 	"github.com/urfave/cli/v2"
 	"github.com/valyala/fasthttp"
 
-	"github-actions-exporter/pkg/config"
-	"github-actions-exporter/pkg/metrics"
+	"github.com/Spendesk/github-actions-exporter/pkg/config"
+	"github.com/Spendesk/github-actions-exporter/pkg/metrics"
 )
 
 // RunServer - run http server for expose metrics
