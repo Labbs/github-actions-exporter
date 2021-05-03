@@ -29,8 +29,10 @@ func workflowCache() {
 			}
 
 			s := make(map[int64]github.Workflow)
-			for _, w := range resp.Workflows {
-				s[*w.ID] = *w
+			if resp != nil {
+				for _, w := range resp.Workflows {
+					s[*w.ID] = *w
+				}
 			}
 
 			ww[repo] = s
