@@ -20,7 +20,9 @@ var (
 // InitMetrics - register metrics in prometheus lib and start func for monitor
 func InitMetrics() {
 	prometheus.MustRegister(runnersGauge)
+	prometheus.MustRegister(runnersBusyGauge)
 	prometheus.MustRegister(runnersOrganizationGauge)
+	prometheus.MustRegister(runnersOrganizationBusyGauge)
 	prometheus.MustRegister(workflowRunStatusGauge)
 	prometheus.MustRegister(workflowRunStatusDeprecatedGauge)
 	prometheus.MustRegister(workflowRunDurationGauge)

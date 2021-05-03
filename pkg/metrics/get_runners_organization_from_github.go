@@ -20,6 +20,13 @@ var (
 		},
 		[]string{"organization", "os", "name", "id"},
 	)
+	runnersOrganizationBusyGauge = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "github_runner_organization_busy",
+			Help: "runner busy status",
+		},
+		[]string{"organization", "os", "name", "id"},
+	)
 )
 
 // getRunnersOrganizationFromGithub - return information about runners and their status for an organization
@@ -37,6 +44,11 @@ func getRunnersOrganizationFromGithub() {
 							runnersOrganizationGauge.WithLabelValues(orga, *runner.OS, *runner.Name, strconv.FormatInt(runner.GetID(), 10)).Set(1)
 						} else {
 							runnersOrganizationGauge.WithLabelValues(orga, *runner.OS, *runner.Name, strconv.FormatInt(runner.GetID(), 10)).Set(0)
+						}
+						if runner.GetBusy() {
+							runnersOrganizationBusyGauge.WithLabelValues(orga, *runner.OS, *runner.Name, strconv.FormatInt(runner.GetID(), 10)).Set(1)
+						} else {
+							runnersOrganizationBusyGauge.WithLabelValues(orga, *runner.OS, *runner.Name, strconv.FormatInt(runner.GetID(), 10)).Set(0)
 						}
 					}
 					if rr.NextPage == 0 {
