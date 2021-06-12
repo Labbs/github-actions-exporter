@@ -5,11 +5,14 @@ import "github.com/urfave/cli/v2"
 var (
 	// Github - github configuration
 	Github struct {
-		Token         string
-		Refresh       int64
-		Repositories  cli.StringSlice
-		Organizations cli.StringSlice
-		APIURL        string
+		Token             string
+		AppInstallationID int64
+		AppID             int64
+		AppPrivateKey     string
+		Refresh           int64
+		Repositories      cli.StringSlice
+		Organizations     cli.StringSlice
+		APIURL            string
 	}
 	// Port - http port used by fasthttp
 	Port int
@@ -34,6 +37,27 @@ func InitConfiguration() []cli.Flag {
 			EnvVars:     []string{"GITHUB_TOKEN"},
 			Usage:       "Github Personal Token",
 			Destination: &Github.Token,
+		},
+		&cli.Int64Flag{
+			Name:        "github_app_installation_id",
+			Aliases:     []string{"gaiid"},
+			EnvVars:     []string{"GITHUB_APP_INSTALLATION_ID"},
+			Usage:       "Github App Installation ID",
+			Destination: &Github.AppInstallationID,
+		},
+		&cli.Int64Flag{
+			Name:        "github_app_id",
+			Aliases:     []string{"gaid"},
+			EnvVars:     []string{"GITHUB_APP_ID"},
+			Usage:       "Github App ID",
+			Destination: &Github.AppID,
+		},
+		&cli.StringFlag{
+			Name:        "github_private_key",
+			Aliases:     []string{"gapk"},
+			EnvVars:     []string{"GITHUB_APP_PRIVATE_KEY"},
+			Usage:       "Github App Private Key",
+			Destination: &Github.AppPrivateKey,
 		},
 		&cli.Int64Flag{
 			Name:        "github_refresh",

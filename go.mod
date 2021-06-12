@@ -3,6 +3,7 @@ module github-actions-exporter
 go 1.16
 
 require (
+	github.com/bradleyfalzon/ghinstallation v1.1.1 // indirect
 	github.com/fasthttp/router v1.3.9 // indirect
 	github.com/google/go-github/v33 v33.0.1-0.20210311004518-0540c33dca8b // indirect
 	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79 // indirect

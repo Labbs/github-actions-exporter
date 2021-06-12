@@ -4,7 +4,10 @@ import (
 	"github-actions-exporter/pkg/config"
 	"log"
 	"net/http"
+	"os"
+	"strings"
 
+	"github.com/bradleyfalzon/ghinstallation"
 	"github.com/google/go-github/v33/github"
 	"github.com/gregjones/httpcache"
 	"github.com/prometheus/client_golang/prometheus"
@@ -25,10 +28,30 @@ func InitMetrics() {
 	prometheus.MustRegister(workflowRunDurationGauge)
 	prometheus.MustRegister(workflowBillGauge)
 
-	t := &oauth2.Transport{
-		Source: oauth2.StaticTokenSource(
-			&oauth2.Token{AccessToken: config.Github.Token},
-		),
+	var t http.RoundTripper
+
+	if len(config.Github.Token) > 0 {
+		t = &oauth2.Transport{
+			Source: oauth2.StaticTokenSource(
+				&oauth2.Token{AccessToken: config.Github.Token},
+			),
+		}
+	} else {
+		var tr *ghinstallation.Transport
+
+		if _, err := os.Stat(config.Github.AppPrivateKey); err == nil {
+			tr, err = ghinstallation.NewKeyFromFile(http.DefaultTransport, config.Github.AppID, config.Github.AppInstallationID, config.Github.AppPrivateKey)
+			if err != nil {
+				log.Fatalf("authentication failed: using private key from file %s: %v", config.Github.AppPrivateKey, err)
+			}
+		} else {
+			tr, err = ghinstallation.New(http.DefaultTransport, config.Github.AppID, config.Github.AppInstallationID, []byte(config.Github.AppPrivateKey))
+			if err != nil {
+				log.Fatalf("authentication failed: using private key of size %d (%s...): %v", len(config.Github.AppPrivateKey), strings.Split(config.Github.AppPrivateKey, "\n")[0], err)
+			}
+		}
+
+		t = tr
 	}
 
 	transport := &httpcache.Transport{

@@ -14,11 +14,17 @@ If you want to monitor a public repository, you must put the public_repo option 
 | Name | Flag | Env vars | Default | Description |
 |---|---|---|---|---|
 | Github Token | github_token, gt | GITHUB_TOKEN | - | Personnal Access Token |
+| Github App Installation ID | github_app_installation_id, gaiid| GITHUB_APP_INSTALLATION_ID | - | Github App Installation ID |
+| Github App ID | github_app_id, gaid| GITHUB_APP_ID | - | Github App ID |
+| Github App Private Key | github_app_private_key, gapk | GITHUB_APP_PRIVATE_KEY | - | Private key, or path to file that contains the key |
 | Github Refresh | github_refresh, gr | GITHUB_REFRESH | 30 | Refresh time Github Actions status in sec |
 | Github Organizations | github_orgas, go | GITHUB_ORGAS | - | List all organizations you want get informations. Format \<orga1>,\<orga2>,\<orga3> (like test1,test2) |
 | Github Repos | github_repos, grs | GITHUB_REPOS | - | List all repositories you want get informations. Format \<orga>/\<repo>,\<orga>/\<repo2>,\<orga>/\<repo3> (like test/test) |
 | Exporter port | port, p | PORT | 9999 | Exporter port |
 | Github Api URL | github_api_url, url | GITHUB_API_URL | api.github.com | Github API URL (primarily for Github Enterprise usage) |
+
+
+###### NOTE: Github App authentication will not be used if a github token is provided.
 
 ## Exported stats
 
