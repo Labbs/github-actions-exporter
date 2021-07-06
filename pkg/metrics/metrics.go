@@ -16,18 +16,34 @@ import (
 )
 
 var (
-	client *github.Client
-	err    error
+	client                   *github.Client
+	err                      error
+	workflowRunStatusGauge   *prometheus.GaugeVec
+	workflowRunDurationGauge *prometheus.GaugeVec
 )
 
 // InitMetrics - register metrics in prometheus lib and start func for monitor
 func InitMetrics() {
+	workflowRunStatusGauge = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "github_workflow_run_status",
+			Help: "Workflow run status",
+		},
+		config.Github.WorkflowFields.Value(),
+	)
+	workflowRunDurationGauge = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "github_workflow_run_duration_ms",
+			Help: "Workflow run duration (in milliseconds)",
+		},
+		config.Github.WorkflowFields.Value(),
+	)
 	prometheus.MustRegister(runnersGauge)
 	prometheus.MustRegister(runnersOrganizationGauge)
 	prometheus.MustRegister(workflowRunStatusGauge)
-	prometheus.MustRegister(workflowRunStatusDeprecatedGauge)
 	prometheus.MustRegister(workflowRunDurationGauge)
 	prometheus.MustRegister(workflowBillGauge)
+	prometheus.MustRegister(runnersEnterpriseGauge)
 
 	client, err = NewClient()
 	if err != nil {
@@ -46,6 +62,7 @@ func InitMetrics() {
 	go getRunnersFromGithub()
 	go getRunnersOrganizationFromGithub()
 	go getWorkflowRunsFromGithub()
+	go getRunnersEnterpriseFromGithub()
 }
 
 // NewClient creates a Github Client

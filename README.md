@@ -28,6 +28,8 @@ Authentication can either via a Github Token or the Github App Authentication 3 
 | Github Repos | github_repos, grs | GITHUB_REPOS | - | List all repositories you want get informations. Format \<orga>/\<repo>,\<orga>/\<repo2>,\<orga>/\<repo3> (like test/test) |
 | Exporter port | port, p | PORT | 9999 | Exporter port |
 | Github Api URL | github_api_url, url | GITHUB_API_URL | api.github.com | Github API URL (primarily for Github Enterprise usage) |
+| Github Enterprise Name | enterprise_name | ENTERPRISE_NAME | "" | Enterprise name. Needed for enterprise endpoints (/enterprises/{ENTERPRISE_NAME}/*). Currently used to get Enterprise level tunners status |
+| Fields to export | export_fields | EXPORT_FIELDS | repo,id,node_id,head_branch,head_sha,run_number,workflow_id,workflow,event,status | A comma separated list of fields for workflow metrics that should be exported |
 
 ## Exported stats
 
@@ -124,6 +126,25 @@ Gauge type
 | os | Operating system (linux/macos/windows) |
 | orga | Organization name |
 | status | Runner status (online/offline) |
+
+### github_runner_enterprise_status
+Gauge type
+(If you have self hosted runner for an enterprise)
+
+**Result possibility**
+
+| ID | Description |
+|---|---|
+| 0 | Offline |
+| 1 | Online |
+
+**Fields**
+
+| Name | Description |
+|---|---|
+| id | Runner id (incremental id) |
+| name | Runner name |
+| os | Operating system (linux/macos/windows) |
 
 ### github_workflow_usage_seconds
 Gauge type

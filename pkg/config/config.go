@@ -13,10 +13,10 @@ var (
 		Repositories      cli.StringSlice
 		Organizations     cli.StringSlice
 		APIURL            string
+		EnterpriseName    string
+		WorkflowFields    cli.StringSlice
 	}
-	// Port - http port used by fasthttp
-	Port int
-	// Debug - option for debug the exporter
+	Port  int
 	Debug bool
 )
 
@@ -94,6 +94,20 @@ func InitConfiguration() []cli.Flag {
 			EnvVars:     []string{"DEBUG_PROFILE"},
 			Usage:       "Expose pprof information on /debug/pprof/",
 			Destination: &Debug,
+		},
+		&cli.StringFlag{
+			Name:        "enterprise_name",
+			EnvVars:     []string{"ENTERPRISE_NAME"},
+			Usage:       "Enterprise name. Needed for enterprise endpoints (/enterprises/{ENTERPRISE_NAME}/*)",
+			Destination: &EnterpriseName,
+			Value:       "",
+		},
+		&cli.StringFlag{
+			Name:        "export_fields",
+			EnvVars:     []string{"EXPORT_FIELDS"},
+			Usage:       "A comma separated list of fields for workflow metrics that should be exported",
+			Value:       "repo,id,node_id,head_branch,head_sha,run_number,workflow_id,workflow,event,status",
+			Destination: &WorkflowFields,
 		},
 	}
 }

@@ -8,32 +8,45 @@ import (
 	"strings"
 	"time"
 
-	"github.com/prometheus/client_golang/prometheus"
+	"github.com/google/go-github/v33/github"
 )
 
-var (
-	workflowRunStatusDeprecatedGauge = prometheus.NewGaugeVec(
-		prometheus.GaugeOpts{
-			Name: "github_job",
-			Help: "Workflow run status, old name and duplicate of github_workflow_run_status that will soon be deprecated",
-		},
-		[]string{"repo", "id", "node_id", "head_branch", "head_sha", "run_number", "workflow_id", "workflow", "event", "status"},
-	)
-	workflowRunStatusGauge = prometheus.NewGaugeVec(
-		prometheus.GaugeOpts{
-			Name: "github_workflow_run_status",
-			Help: "Workflow run status",
-		},
-		[]string{"repo", "id", "node_id", "head_branch", "head_sha", "run_number", "workflow_id", "workflow", "event", "status"},
-	)
-	workflowRunDurationGauge = prometheus.NewGaugeVec(
-		prometheus.GaugeOpts{
-			Name: "github_workflow_run_duration_ms",
-			Help: "Workflow run duration (in milliseconds)",
-		},
-		[]string{"repo", "id", "node_id", "head_branch", "head_sha", "run_number", "workflow_id", "workflow", "event", "status"},
-	)
-)
+// getFieldValue return value from run element which corresponds to field
+func getFieldValue(repo string, run github.WorkflowRun, field string) string {
+	switch field {
+	case "repo":
+		return repo
+	case "id":
+		return strconv.FormatInt(*run.ID, 10)
+	case "node_id":
+		return *run.NodeID
+	case "head_branch":
+		return *run.HeadBranch
+	case "head_sha":
+		return *run.HeadSHA
+	case "run_number":
+		return strconv.Itoa(*run.RunNumber)
+	case "workflow_id":
+		return strconv.FormatInt(*run.WorkflowID, 10)
+	case "workflow":
+		return *workflows[repo][*run.WorkflowID].Name
+	case "event":
+		return *run.Event
+	case "status":
+		return *run.Status
+	}
+	return ""
+}
+
+//
+func getRelevantFields(repo string, run *github.WorkflowRun) []string {
+	relevantFields := config.Github.WorkflowFields.Value()
+	result := make([]string, len(relevantFields))
+	for i, field := range relevantFields {
+		result[i] = getFieldValue(repo, *run, field)
+	}
+	return result
+}
 
 // getWorkflowRunsFromGithub - return informations and status about a worflow
 func getWorkflowRunsFromGithub() {
@@ -55,14 +68,19 @@ func getWorkflowRunsFromGithub() {
 					} else if run.GetConclusion() == "queued" {
 						s = 4
 					}
-					workflowRunStatusGauge.WithLabelValues(repo, strconv.FormatInt(*run.ID, 10), *run.NodeID, *run.HeadBranch, *run.HeadSHA, strconv.Itoa(*run.RunNumber), strconv.FormatInt(*run.WorkflowID, 10), *workflows[repo][*run.WorkflowID].Name, *run.Event, *run.Status).Set(s)
-					workflowRunStatusDeprecatedGauge.WithLabelValues(repo, strconv.FormatInt(*run.ID, 10), *run.NodeID, *run.HeadBranch, *run.HeadSHA, strconv.Itoa(*run.RunNumber), strconv.FormatInt(*run.WorkflowID, 10), *workflows[repo][*run.WorkflowID].Name, *run.Event, *run.Status).Set(s)
+
+					fields := getRelevantFields(repo, run)
+
+					workflowRunStatusGauge.WithLabelValues(fields...).Set(s)
 
 					resp, _, err := client.Actions.GetWorkflowRunUsageByID(context.Background(), r[0], r[1], *run.ID)
-					if err != nil {
-						log.Printf("GetWorkflowRunUsageByID error for %s: %s", repo, err.Error())
+					if err != nil { // Fallback for Github Enterprise
+						created := run.CreatedAt.Time.Unix()
+						updated := run.UpdatedAt.Time.Unix()
+						elapsed := updated - created
+						workflowRunDurationGauge.WithLabelValues(fields...).Set(float64(elapsed * 1000))
 					} else {
-						workflowRunDurationGauge.WithLabelValues(repo, strconv.FormatInt(*run.ID, 10), *run.NodeID, *run.HeadBranch, *run.HeadSHA, strconv.Itoa(*run.RunNumber), strconv.FormatInt(*run.WorkflowID, 10), *workflows[repo][*run.WorkflowID].Name, *run.Event, *run.Status).Set(float64(resp.GetRunDurationMS()))
+						workflowRunDurationGauge.WithLabelValues(fields...).Set(float64(resp.GetRunDurationMS()))
 					}
 				}
 			}
