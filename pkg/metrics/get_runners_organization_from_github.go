@@ -23,9 +23,9 @@ var (
 
 // getRunnersOrganizationFromGithub - return information about runners and their status for an organization
 func getRunnersOrganizationFromGithub() {
-	opt := &github.ListOptions{PerPage: 10}
 	for {
 		for _, orga := range config.Github.Organizations.Value() {
+			opt := &github.ListOptions{PerPage: 10}
 			for {
 				resp, rr, err := client.Actions.ListOrganizationRunners(context.Background(), orga, opt)
 				if err != nil {
@@ -47,5 +47,6 @@ func getRunnersOrganizationFromGithub() {
 		}
 
 		time.Sleep(time.Duration(config.Github.Refresh) * time.Second)
+		runnersOrganizationGauge.Reset()
 	}
 }
