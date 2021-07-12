@@ -12,12 +12,12 @@ var (
 		Refresh           int64
 		Repositories      cli.StringSlice
 		Organizations     cli.StringSlice
-		APIURL            string
-		EnterpriseName    string
-		WorkflowFields    cli.StringSlice
+		APIURL            string		
 	}
 	Port  int
 	Debug bool
+	EnterpriseName    string
+	WorkflowFields    cli.StringSlice
 )
 
 // InitConfiguration - set configuration from env vars or command parameters
