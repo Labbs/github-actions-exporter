@@ -22,7 +22,7 @@ var (
 
 func getRunnersEnterpriseFromGithub() {
 	for {
-		runners, _, err := client.Enterprise.ListRunners(context.Background(), config.Github.EnterpriseName, nil)
+		runners, _, err := client.Enterprise.ListRunners(context.Background(), config.EnterpriseName, nil)
 		if err != nil {
 			log.Printf("Enterprise.ListRunners error: %s", err.Error())
 		} else {

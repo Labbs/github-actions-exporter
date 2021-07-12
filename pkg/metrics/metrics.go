@@ -29,14 +29,14 @@ func InitMetrics() {
 			Name: "github_workflow_run_status",
 			Help: "Workflow run status",
 		},
-		config.Github.WorkflowFields.Value(),
+		strings.Split(config.WorkflowFields, ","),
 	)
 	workflowRunDurationGauge = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "github_workflow_run_duration_ms",
 			Help: "Workflow run duration (in milliseconds)",
 		},
-		config.Github.WorkflowFields.Value(),
+		strings.Split(config.WorkflowFields, ","),
 	)
 	prometheus.MustRegister(runnersGauge)
 	prometheus.MustRegister(runnersOrganizationGauge)

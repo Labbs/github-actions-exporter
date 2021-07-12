@@ -12,7 +12,7 @@ var (
 		Refresh           int64
 		Repositories      cli.StringSlice
 		Organizations     cli.StringSlice
-		APIURL            string		
+		APIURL            string			
 	}
 	Port  int
 	Debug bool
