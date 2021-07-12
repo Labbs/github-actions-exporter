@@ -17,7 +17,7 @@ var (
 	Port  int
 	Debug bool
 	EnterpriseName    string
-	WorkflowFields    cli.StringSlice
+	WorkflowFields    string
 )
 
 // InitConfiguration - set configuration from env vars or command parameters
