@@ -1,37 +1,52 @@
 package metrics
 
 import (
-	"github-actions-exporter/pkg/config"
 	"context"
 	"fmt"
-	"strings"
+	"github-actions-exporter/pkg/config"
 	"log"
 	"net/http"
 	"net/url"
+	"strings"
 
+	"github.com/bradleyfalzon/ghinstallation"
 	"github.com/google/go-github/v33/github"
-	//"github.com/gregjones/httpcache"
 	"github.com/prometheus/client_golang/prometheus"
 	"golang.org/x/oauth2"
-	"github.com/bradleyfalzon/ghinstallation"
 )
 
 var (
-	client *github.Client
-	err    error
+	client                   *github.Client
+	err                      error
+	workflowRunStatusGauge   *prometheus.GaugeVec
+	workflowRunDurationGauge *prometheus.GaugeVec
 )
 
 // InitMetrics - register metrics in prometheus lib and start func for monitor
 func InitMetrics() {
+	workflowRunStatusGauge = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "github_workflow_run_status",
+			Help: "Workflow run status",
+		},
+		config.Github.WorkflowFields.Value(),
+	)
+	workflowRunDurationGauge = prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Name: "github_workflow_run_duration_ms",
+			Help: "Workflow run duration (in milliseconds)",
+		},
+		config.Github.WorkflowFields.Value(),
+	)
 	prometheus.MustRegister(runnersGauge)
 	prometheus.MustRegister(runnersOrganizationGauge)
 	prometheus.MustRegister(workflowRunStatusGauge)
-	prometheus.MustRegister(workflowRunStatusDeprecatedGauge)
 	prometheus.MustRegister(workflowRunDurationGauge)
 	prometheus.MustRegister(workflowBillGauge)
+	prometheus.MustRegister(runnersEnterpriseGauge)
 
 	client, err = NewClient()
-	if err != nil {		
+	if err != nil {
 		log.Fatalln("Error: Client creation failed." + err.Error())
 	}
 
@@ -47,16 +62,16 @@ func InitMetrics() {
 	go getRunnersFromGithub()
 	go getRunnersOrganizationFromGithub()
 	go getWorkflowRunsFromGithub()
+	go getRunnersEnterpriseFromGithub()
 }
 
 // NewClient creates a Github Client
-func  NewClient() (*github.Client, error) {
+func NewClient() (*github.Client, error) {
 	var (
 		httpClient *http.Client
 		client     *github.Client
 		transport  http.RoundTripper
 	)
-	//githubBaseURL := "https://github.com/"
 	if len(config.Github.Token) > 0 {
 		log.Printf("authenticating with Github Token")
 		transport = oauth2.NewClient(context.Background(), oauth2.StaticTokenSource(&oauth2.Token{AccessToken: config.Github.Token})).Transport
@@ -67,8 +82,8 @@ func  NewClient() (*github.Client, error) {
 		if err != nil {
 			return nil, fmt.Errorf("authentication failed: %v", err)
 		}
-		if config.Github.ApiUrl != "api.github.com" {
-			githubAPIURL, err := getEnterpriseApiUrl(config.Github.ApiUrl)
+		if config.Github.APIURL != "api.github.com" {
+			githubAPIURL, err := getEnterpriseApiUrl(config.Github.APIURL)
 			if err != nil {
 				return nil, fmt.Errorf("enterprise url incorrect: %v", err)
 			}
@@ -77,13 +92,12 @@ func  NewClient() (*github.Client, error) {
 		httpClient = &http.Client{Transport: tr}
 	}
 
-	if config.Github.ApiUrl != "api.github.com" {
+	if config.Github.APIURL != "api.github.com" {
 		var err error
-		client, err = github.NewEnterpriseClient(config.Github.ApiUrl, config.Github.ApiUrl, httpClient)
+		client, err = github.NewEnterpriseClient(config.Github.APIURL, config.Github.APIURL, httpClient)
 		if err != nil {
 			return nil, fmt.Errorf("enterprise client creation failed: %v", err)
 		}
-		//githubBaseURL = fmt.Sprintf("%s://%s%s", client.BaseURL.Scheme, client.BaseURL.Host, strings.TrimSuffix(client.BaseURL.Path, "api/v3/"))
 	} else {
 		client = github.NewClient(httpClient)
 	}

@@ -1,17 +1,20 @@
 package config
 
-import "github.com/urfave/cli/v2"	
+import "github.com/urfave/cli/v2"
 
 var (
+	// Github - github configuration
 	Github struct {
 		AppID             int64  `split_words:"true"`
 		AppInstallationID int64  `split_words:"true"`
 		AppPrivateKey     string `split_words:"true"`
-		Token         	  string
-		Refresh       	  int64
-		Repositories  	  cli.StringSlice
-		Organizations 	  cli.StringSlice
-		ApiUrl        	  string
+		Token             string
+		Refresh           int64
+		Repositories      cli.StringSlice
+		Organizations     cli.StringSlice
+		APIURL            string
+		EnterpriseName    string
+		WorkflowFields    cli.StringSlice
 	}
 	Port  int
 	Debug bool
@@ -40,7 +43,7 @@ func InitConfiguration() []cli.Flag {
 			EnvVars:     []string{"GITHUB_APP_PRIVATE_KEY"},
 			Usage:       "Github App Private Key",
 			Destination: &Github.AppPrivateKey,
-		},						
+		},
 		&cli.IntFlag{
 			Name:        "port",
 			Aliases:     []string{"p"},
@@ -70,7 +73,7 @@ func InitConfiguration() []cli.Flag {
 			EnvVars:     []string{"GITHUB_API_URL"},
 			Value:       "api.github.com",
 			Usage:       "Github API URL (primarily designed for Github Enterprise use cases)",
-			Destination: &Github.ApiUrl,
+			Destination: &Github.APIURL,
 		},
 		&cli.StringSliceFlag{
 			Name:        "github_orgas",
@@ -91,6 +94,20 @@ func InitConfiguration() []cli.Flag {
 			EnvVars:     []string{"DEBUG_PROFILE"},
 			Usage:       "Expose pprof information on /debug/pprof/",
 			Destination: &Debug,
+		},
+		&cli.StringFlag{
+			Name:        "enterprise_name",
+			EnvVars:     []string{"ENTERPRISE_NAME"},
+			Usage:       "Enterprise name. Needed for enterprise endpoints (/enterprises/{ENTERPRISE_NAME}/*)",
+			Destination: &EnterpriseName,
+			Value:       "",
+		},
+		&cli.StringFlag{
+			Name:        "export_fields",
+			EnvVars:     []string{"EXPORT_FIELDS"},
+			Usage:       "A comma separated list of fields for workflow metrics that should be exported",
+			Value:       "repo,id,node_id,head_branch,head_sha,run_number,workflow_id,workflow,event,status",
+			Destination: &WorkflowFields,
 		},
 	}
 }
