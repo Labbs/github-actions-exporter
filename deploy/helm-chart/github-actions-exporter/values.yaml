@@ -14,6 +14,8 @@ env:
   GITHUB_REPOS: "" # List all repositories you want get informations. <orga>/<repo>,<orga>/<repo2>,<orga>/<repo3> (like test/test)
   PORT: 9999 # Exporter port
   GITHUB_API_URL: api.github.com
+#  ENTERPRISE_NAME: "" # Needed for enterprise endpoints (/enterprises/{ENTERPRISE_NAME}/*)
+#  EXPORT_FIELDS: "repo,id,node_id,head_branch,head_sha,run_number,workflow_id,workflow,event,status"  # A comma separated list of fields for workflow metrics that should be exported
 #  For the github authentications need to create a secret by default called actions-exporter
 #  for authentication via github personal token
 #                key: github_token
