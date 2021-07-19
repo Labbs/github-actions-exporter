@@ -34,6 +34,12 @@ func getFieldValue(repo string, run github.WorkflowRun, field string) string {
 		return *run.Event
 	case "status":
 		return *run.Status
+	case "conclusion":
+		return run.GetConclusion()
+	case "created_at":
+		return run.CreatedAt.Format(time.RFC3339)
+	case "updated_at":
+		return run.UpdatedAt.Format(time.RFC3339)
 	}
 	return ""
 }
