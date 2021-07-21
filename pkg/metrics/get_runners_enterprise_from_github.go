@@ -4,7 +4,6 @@ import (
 	"context"
 	"github-actions-exporter/pkg/config"
 	"log"
-	"strconv"
 	"time"
 
 	"github.com/prometheus/client_golang/prometheus"
@@ -16,7 +15,7 @@ var (
 			Name: "github_runner_enterprise_status",
 			Help: "runner status",
 		},
-		[]string{"os", "name", "id", "status"},
+		[]string{"os", "name", "status"},
 	)
 )
 
@@ -35,7 +34,7 @@ func getRunnersEnterpriseFromGithub() {
 				if status = "idle"; *runner.Busy == true {
 					status = "busy"
 				}
-				runnersEnterpriseGauge.WithLabelValues(*runner.OS, *runner.Name, strconv.FormatInt(runner.GetID(), 10), status).Set(integerStatus)
+				runnersEnterpriseGauge.WithLabelValues(*runner.OS, *runner.Name, status).Set(integerStatus)
 			}
 		}
 		time.Sleep(time.Duration(config.Github.Refresh) * time.Second)
