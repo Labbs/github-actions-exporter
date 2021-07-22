@@ -20,8 +20,8 @@ var (
 )
 
 func getRunnersEnterpriseFromGithub() {
-	runnersEnterpriseGauge.Reset()
 	for {
+		runnersEnterpriseGauge.Reset()
 		runners, _, err := client.Enterprise.ListRunners(context.Background(), config.EnterpriseName, nil)
 		if err != nil {
 			log.Printf("Enterprise.ListRunners error: %s", err.Error())
