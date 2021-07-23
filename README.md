@@ -20,7 +20,7 @@ If you want to monitor a public repository, you must put the public_repo option 
 | Exporter port | port, p | PORT | 9999 | Exporter port |
 | Github Api URL | github_api_url, url | GITHUB_API_URL | api.github.com | Github API URL (primarily for Github Enterprise usage) |
 | Github Enterprise Name | enterprise_name | ENTERPRISE_NAME | "" | Enterprise name. Needed for enterprise endpoints (/enterprises/{ENTERPRISE_NAME}/*). Currently used to get Enterprise level tunners status |
-| Fields to export | export_fields | EXPORT_FIELDS | repo,id,node_id,head_branch,head_sha,run_number,workflow_id,workflow,event,status | A comma separated list of fields for workflow metrics that should be exported |
+| Fields to export | export_fields | EXPORT_FIELDS | repo,id,node_id,head_branch,head_sha,run_number,workflow_id,workflow,event,status,created_at,updated_at,conclusion | A comma separated list of fields for workflow metrics that should be exported |
 
 ## Exported stats
 
@@ -49,6 +49,9 @@ Gauge type
 | workflow_id | Workflow ID |
 | workflow | Workflow Name |
 | status | Workflow status (completed/in_progress) |
+| created_at | Workflow run creation timestamp |
+| updated_at | Workflow run update timestamp |
+| conclusion | Result of workflow run |
 
 ### github_workflow_run_duration_ms
 Gauge type
@@ -72,6 +75,10 @@ Gauge type
 | workflow_id | Workflow ID |
 | workflow | Workflow Name |
 | status | Workflow status (completed/in_progress) |
+| created_at | Workflow run creation timestamp |
+| updated_at | Workflow run update timestamp |
+| conclusion | Result of workflow run |
+
 
 ### github_job
 > :warning: **This is a duplicate of the `github_workflow_run_status` metric that will soon be deprecated, do not use anymore.**
@@ -136,6 +143,7 @@ Gauge type
 | id | Runner id (incremental id) |
 | name | Runner name |
 | os | Operating system (linux/macos/windows) |
+| status | Runner status (busy/idle) |
 
 ### github_workflow_usage_seconds
 Gauge type
