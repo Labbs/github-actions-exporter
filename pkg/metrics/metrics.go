@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/bradleyfalzon/ghinstallation"
-	"github.com/google/go-github/v33/github"
+	"github.com/google/go-github/v38/github"
 	"github.com/prometheus/client_golang/prometheus"
 	"golang.org/x/oauth2"
 )
