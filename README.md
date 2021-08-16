@@ -190,11 +190,11 @@ If you are deploying the solution for a GitHub Enterprise Server environment you
 
 You can create a GitHub App for either your account or any organization. If you want to create a GitHub App for your account, open the following link to the creation page, enter any unique name in the "GitHub App name" field, and hit the "Create GitHub App" button at the bottom of the page.
 
-- [Create GitHub Apps on your account](https://github.com/settings/apps/new?url=http://github.com/actions-runner-controller/actions-runner-controller&webhook_active=false&public=false&administration=write&actions=read)
+- [Create GitHub Apps on your account](https://github.com/settings/apps/new?url=http://github.com/github-actions-exporter/github-actions-exporter&webhook_active=false&public=false&administration=write&actions=read)
 
 If you want to create a GitHub App for your organization, replace the `:org` part of the following URL with your organization name before opening it. Then enter any unique name in the "GitHub App name" field, and hit the "Create GitHub App" button at the bottom of the page to create a GitHub App.
 
-- [Create GitHub Apps on your organization](https://github.com/organizations/:org/settings/apps/new?url=http://github.com/actions-runner-controller/actions-runner-controller&webhook_active=false&public=false&administration=write&organization_self_hosted_runners=write&actions=read)
+- [Create GitHub Apps on your organization](https://github.com/organizations/:org/settings/apps/new?url=http://github.com/github-actions-exporter/github-actions-exporter&webhook_active=false&public=false&administration=write&organization_self_hosted_runners=write&actions=read)
 
 ### Github Token configuration
 
