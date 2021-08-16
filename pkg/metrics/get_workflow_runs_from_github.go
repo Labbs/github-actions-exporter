@@ -53,11 +53,18 @@ func getWorkflowRunsFromGithub() {
 	for {
 		for _, repo := range config.Github.Repositories.Value() {
 			r := strings.Split(repo, "/")
-			resp, _, err := client.Actions.ListRepositoryWorkflowRuns(context.Background(), r[0], r[1], nil)
-			if err != nil {
-				log.Printf("ListRepositoryWorkflowRuns error for %s: %s", repo, err.Error())
-			} else {
-				for _, run := range resp.WorkflowRuns {
+			opt := &github.ListWorkflowRunsOptions{
+				ListOptions: github.ListOptions{PerPage: 30},
+			}
+
+			for {
+				data, resp, err := client.Actions.ListRepositoryWorkflowRuns(context.Background(), r[0], r[1], opt)
+				if err != nil {
+					log.Printf("ListRepositoryWorkflowRuns error for %s: %s", repo, err.Error())
+					break
+				}
+
+				for _, run := range data.WorkflowRuns {
 					var s float64 = 0
 					if run.GetConclusion() == "success" {
 						s = 1
@@ -83,7 +90,13 @@ func getWorkflowRunsFromGithub() {
 						workflowRunDurationGauge.WithLabelValues(fields...).Set(float64(resp.GetRunDurationMS()))
 					}
 				}
+
+				if resp.NextPage == 0 {
+					break
+				}
+				opt.Page = resp.NextPage
 			}
+
 		}
 
 		time.Sleep(time.Duration(config.Github.Refresh) * time.Second)
