@@ -27,20 +27,20 @@ func workflowCache() {
 			opt := &github.ListOptions{PerPage: 30}
 
 			for {
-				data, resp, err := client.Actions.ListWorkflows(context.Background(), r[0], r[1], opt)
+				resp, rr, err := client.Actions.ListWorkflows(context.Background(), r[0], r[1], opt)
 				if err != nil {
 					log.Printf("ListWorkflows error for %s: %s", repo, err.Error())
 					break
 				}
-				for _, w := range data.Workflows {
+				for _, w := range resp.Workflows {
 					fmt.Println(*w.Name)
 					s[*w.ID] = *w
 				}
 
-				if resp.NextPage == 0 {
+				if rr.NextPage == 0 {
 					break
 				}
-				opt.Page = resp.NextPage
+				opt.Page = rr.NextPage
 			}
 
 			ww[repo] = s

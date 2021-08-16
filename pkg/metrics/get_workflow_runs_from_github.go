@@ -58,13 +58,13 @@ func getWorkflowRunsFromGithub() {
 			}
 
 			for {
-				data, resp, err := client.Actions.ListRepositoryWorkflowRuns(context.Background(), r[0], r[1], opt)
+				resp, rr, err := client.Actions.ListRepositoryWorkflowRuns(context.Background(), r[0], r[1], opt)
 				if err != nil {
 					log.Printf("ListRepositoryWorkflowRuns error for %s: %s", repo, err.Error())
 					break
 				}
 
-				for _, run := range data.WorkflowRuns {
+				for _, run := range resp.WorkflowRuns {
 					var s float64 = 0
 					if run.GetConclusion() == "success" {
 						s = 1
@@ -91,10 +91,10 @@ func getWorkflowRunsFromGithub() {
 					}
 				}
 
-				if resp.NextPage == 0 {
+				if rr.NextPage == 0 {
 					break
 				}
-				opt.Page = resp.NextPage
+				opt.Page = rr.NextPage
 			}
 
 		}
