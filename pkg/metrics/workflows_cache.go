@@ -2,6 +2,7 @@ package metrics
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"strings"
 	"time"
@@ -22,19 +23,27 @@ func workflowCache() {
 
 		for _, repo := range config.Github.Repositories.Value() {
 			r := strings.Split(repo, "/")
+			s := make(map[int64]github.Workflow)
+			opt := &github.ListOptions{PerPage: 30}
 
-			resp, _, err := client.Actions.ListWorkflows(context.Background(), r[0], r[1], nil)
-			if err != nil {
-				log.Printf("ListWorkflows error for %s: %s", repo, err.Error())
-			} else {
-
-				s := make(map[int64]github.Workflow)
-				for _, w := range resp.Workflows {
+			for {
+				data, resp, err := client.Actions.ListWorkflows(context.Background(), r[0], r[1], opt)
+				if err != nil {
+					log.Printf("ListWorkflows error for %s: %s", repo, err.Error())
+					break
+				}
+				for _, w := range data.Workflows {
+					fmt.Println(*w.Name)
 					s[*w.ID] = *w
 				}
 
-				ww[repo] = s
+				if resp.NextPage == 0 {
+					break
+				}
+				opt.Page = resp.NextPage
 			}
+
+			ww[repo] = s
 
 		}
 
