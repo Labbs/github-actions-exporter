@@ -3,22 +3,47 @@ package config
 import "github.com/urfave/cli/v2"
 
 var (
+	// Github - github configuration
 	Github struct {
-		Token         string
-		Refresh       int64
-		Repositories  cli.StringSlice
-		Organizations cli.StringSlice
-		ApiUrl        string
+		AppID             int64  `split_words:"true"`
+		AppInstallationID int64  `split_words:"true"`
+		AppPrivateKey     string `split_words:"true"`
+		Token             string
+		Refresh           int64
+		Repositories      cli.StringSlice
+		Organizations     cli.StringSlice
+		APIURL            string			
 	}
-	Port           int
-	Debug          bool
-	EnterpriseName string
-	WorkflowFields string
+	Port  int
+	Debug bool
+	EnterpriseName    string
+	WorkflowFields    string
 )
 
 // InitConfiguration - set configuration from env vars or command parameters
 func InitConfiguration() []cli.Flag {
 	return []cli.Flag{
+		&cli.Int64Flag{
+			Name:        "app_id",
+			Aliases:     []string{"gai"},
+			EnvVars:     []string{"GITHUB_APP_ID"},
+			Usage:       "Github App Id",
+			Destination: &Github.AppID,
+		},
+		&cli.Int64Flag{
+			Name:        "app_installation_id",
+			Aliases:     []string{"gii"},
+			EnvVars:     []string{"GITHUB_APP_INSTALLATION_ID"},
+			Usage:       "Github App Installation Id",
+			Destination: &Github.AppInstallationID,
+		},
+		&cli.StringFlag{
+			Name:        "app_private_key",
+			Aliases:     []string{"gpk"},
+			EnvVars:     []string{"GITHUB_APP_PRIVATE_KEY"},
+			Usage:       "Github App Private Key",
+			Destination: &Github.AppPrivateKey,
+		},
 		&cli.IntFlag{
 			Name:        "port",
 			Aliases:     []string{"p"},
@@ -48,7 +73,7 @@ func InitConfiguration() []cli.Flag {
 			EnvVars:     []string{"GITHUB_API_URL"},
 			Value:       "api.github.com",
 			Usage:       "Github API URL (primarily designed for Github Enterprise use cases)",
-			Destination: &Github.ApiUrl,
+			Destination: &Github.APIURL,
 		},
 		&cli.StringSliceFlag{
 			Name:        "github_orgas",

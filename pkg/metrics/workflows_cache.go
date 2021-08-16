@@ -26,14 +26,15 @@ func workflowCache() {
 			resp, _, err := client.Actions.ListWorkflows(context.Background(), r[0], r[1], nil)
 			if err != nil {
 				log.Printf("ListWorkflows error for %s: %s", repo, err.Error())
-			}
+			} else {
 
-			s := make(map[int64]github.Workflow)
-			for _, w := range resp.Workflows {
-				s[*w.ID] = *w
-			}
+				s := make(map[int64]github.Workflow)
+				for _, w := range resp.Workflows {
+					s[*w.ID] = *w
+				}
 
-			ww[repo] = s
+				ww[repo] = s
+			}	
 
 		}
 
