@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/go-github/v33/github"
+	"github.com/google/go-github/v38/github"
 
 	"github-actions-exporter/pkg/config"
 )
@@ -34,7 +34,7 @@ func workflowCache() {
 				}
 
 				ww[repo] = s
-			}	
+			}
 
 		}
 

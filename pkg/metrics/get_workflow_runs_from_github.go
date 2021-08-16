@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/go-github/v33/github"
+	"github.com/google/go-github/v38/github"
 )
 
 // getFieldValue return value from run element which corresponds to field
