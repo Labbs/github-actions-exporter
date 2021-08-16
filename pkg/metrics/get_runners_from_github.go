@@ -27,7 +27,7 @@ func getRunnersFromGithub() {
 	for {
 		for _, repo := range config.Github.Repositories.Value() {
 			r := strings.Split(repo, "/")
-			opt := &github.ListOptions{PerPage: 10}
+			opt := &github.ListOptions{PerPage: 30}
 
 			for {
 				resp, rr, err := client.Actions.ListRunners(context.Background(), r[0], r[1], opt)

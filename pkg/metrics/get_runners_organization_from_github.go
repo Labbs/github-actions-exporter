@@ -25,7 +25,7 @@ var (
 func getRunnersOrganizationFromGithub() {
 	for {
 		for _, orga := range config.Github.Organizations.Value() {
-			opt := &github.ListOptions{PerPage: 10}
+			opt := &github.ListOptions{PerPage: 30}
 			for {
 				resp, rr, err := client.Actions.ListOrganizationRunners(context.Background(), orga, opt)
 				if err != nil {
