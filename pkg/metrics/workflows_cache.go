@@ -2,7 +2,6 @@ package metrics
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"strings"
 	"time"
@@ -33,7 +32,6 @@ func workflowCache() {
 					break
 				}
 				for _, w := range resp.Workflows {
-					fmt.Println(*w.Name)
 					s[*w.ID] = *w
 				}
 
