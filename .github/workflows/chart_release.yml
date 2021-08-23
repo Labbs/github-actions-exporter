@@ -5,12 +5,12 @@ on:
     branches:
       - master
     paths: 
-      - "deploy/helm-chart/github-actions-exporter/**"
+      - "deploy/helm-chart/**"
 
 jobs:
   release:
     runs-on: ubuntu-latest
-    working-directory: deploy/helm-chart/github-actions-exporter
+    working-directory: deploy/helm-chart
     steps:
       - name: Checkout
         uses: actions/checkout@v2
