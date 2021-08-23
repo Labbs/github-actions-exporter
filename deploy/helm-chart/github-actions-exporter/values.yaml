@@ -3,7 +3,7 @@
 image:
   repository: spendeskplatform/github-actions-exporter
   pullPolicy: IfNotPresent
-  tag: "v1.8.0"
+  tag: "v1.8.1"
 
 nameOverride: ""
 fullnameOverride: ""
