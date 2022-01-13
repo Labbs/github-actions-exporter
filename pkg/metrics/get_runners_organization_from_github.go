@@ -17,7 +17,7 @@ var (
 			Name: "github_runner_organization_status",
 			Help: "runner status",
 		},
-		[]string{"organization", "os", "name", "id"},
+		[]string{"organization", "os", "name", "id", "busy"},
 	)
 )
 
@@ -33,9 +33,9 @@ func getRunnersOrganizationFromGithub() {
 				} else {
 					for _, runner := range resp.Runners {
 						if runner.GetStatus() == "online" {
-							runnersOrganizationGauge.WithLabelValues(orga, *runner.OS, *runner.Name, strconv.FormatInt(runner.GetID(), 10)).Set(1)
+							runnersOrganizationGauge.WithLabelValues(orga, *runner.OS, *runner.Name, strconv.FormatInt(runner.GetID(), 10), strconv.FormatBool(runner.GetBusy())).Set(1)
 						} else {
-							runnersOrganizationGauge.WithLabelValues(orga, *runner.OS, *runner.Name, strconv.FormatInt(runner.GetID(), 10)).Set(0)
+							runnersOrganizationGauge.WithLabelValues(orga, *runner.OS, *runner.Name, strconv.FormatInt(runner.GetID(), 10), strconv.FormatBool(runner.GetBusy())).Set(0)
 						}
 					}
 					if rr.NextPage == 0 {
