@@ -48,7 +48,7 @@ func getRelevantFields(repo string, run *github.WorkflowRun) []string {
 	return result
 }
 
-// getWorkflowRunsFromGithub - return informations and status about a worflow
+// getWorkflowRunsFromGithub - return informations and status about a workflow
 func getWorkflowRunsFromGithub() {
 	for {
 		for _, repo := range config.Github.Repositories.Value() {
