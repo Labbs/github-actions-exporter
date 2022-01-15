@@ -105,6 +105,7 @@ Gauge type
 | os | Operating system (linux/macos/windows) |
 | repo | Repository like \<org>/\<repo> |
 | status | Runner status (online/offline) |
+| busy | Runner busy or not (true/false) |
 
 ### github_runner_organization_status
 Gauge type
@@ -126,6 +127,7 @@ Gauge type
 | os | Operating system (linux/macos/windows) |
 | orga | Organization name |
 | status | Runner status (online/offline) |
+| busy | Runner busy or not (true/false) |
 
 ### github_runner_enterprise_status
 Gauge type
