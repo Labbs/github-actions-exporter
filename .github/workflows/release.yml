@@ -1,45 +1,25 @@
-name: Release
+name: Release Charts
 
 on:
   push:
-    # Sequence of patterns matched against refs/tags
-    tags:
-    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+    branches:
+      - main
 
 jobs:
-  build:
-    name: Upload Release Asset
+  release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
-      - uses: actions/setup-go@v2
+      - name: Checkout
+        uses: actions/checkout@v2
         with:
-          go-version: '1.16'
+          fetch-depth: 0
 
-      - name: Get the version
-        id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
 
-      - name: Build
-        run: CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags="-X 'main.version=${{ steps.get_version.outputs.VERSION }}'" -o github-actions-exporter
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1.0.0
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.1.0
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-      - name: Upload Release Asset
-        id: upload-release-asset 
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: github-actions-exporter
-          asset_name: github-actions-exporter
-          asset_content_type: application/binary
+          CR_TOKEN: "${{ secrets.GH_TOKEN }}"
