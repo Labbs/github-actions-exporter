@@ -44,6 +44,7 @@ Gauge type
 | 1 | Success |
 | 2 | Skipped |
 | 3 | In Progress |
+| 4 | Queued |
 
 **Fields**
 
