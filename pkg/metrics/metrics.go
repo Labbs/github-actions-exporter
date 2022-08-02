@@ -50,7 +50,7 @@ func InitMetrics() {
 		log.Fatalln("Error: Client creation failed." + err.Error())
 	}
 
-	go workflowCache()
+	go periodicGithubFetcher()
 
 	for {
 		if workflows != nil {

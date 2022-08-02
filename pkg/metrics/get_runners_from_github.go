@@ -24,7 +24,7 @@ var (
 // getRunnersFromGithub - return information about runners and their status for a specific repo
 func getRunnersFromGithub() {
 	for {
-		for _, repo := range config.Github.Repositories.Value() {
+		for _, repo := range repositories {
 			r := strings.Split(repo, "/")
 			resp, _, err := client.Actions.ListRunners(context.Background(), r[0], r[1], nil)
 			if err != nil {

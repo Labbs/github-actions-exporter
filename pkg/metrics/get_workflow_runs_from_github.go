@@ -29,16 +29,26 @@ func getFieldValue(repo string, run github.WorkflowRun, field string) string {
 	case "workflow_id":
 		return strconv.FormatInt(*run.WorkflowID, 10)
 	case "workflow":
-		return *workflows[repo][*run.WorkflowID].Name
+		r, exist := workflows[repo]
+		if !exist {
+			log.Printf("Couldn't fetch repo '%s' from workflow cache.", repo)
+			return "unknown"
+		}
+		w, exist := r[*run.WorkflowID]
+		if !exist {
+			log.Printf("Couldn't fetch repo '%s', workflow '%d' from workflow cache.", repo, *run.WorkflowID)
+			return "unknown"
+		}
+		return *w.Name
 	case "event":
 		return *run.Event
 	case "status":
 		return *run.Status
 	}
+	log.Printf("Tried to fetch invalid field '%s'", field)
 	return ""
 }
 
-//
 func getRelevantFields(repo string, run *github.WorkflowRun) []string {
 	relevantFields := strings.Split(config.WorkflowFields, ",")
 	result := make([]string, len(relevantFields))
@@ -51,7 +61,7 @@ func getRelevantFields(repo string, run *github.WorkflowRun) []string {
 // getWorkflowRunsFromGithub - return informations and status about a workflow
 func getWorkflowRunsFromGithub() {
 	for {
-		for _, repo := range config.Github.Repositories.Value() {
+		for _, repo := range repositories {
 			r := strings.Split(repo, "/")
 			resp, _, err := client.Actions.ListRepositoryWorkflowRuns(context.Background(), r[0], r[1], nil)
 			if err != nil {

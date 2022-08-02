@@ -24,7 +24,7 @@ var (
 // getBillableFromGithub - return billable informations for MACOS, WINDOWS and UBUNTU runners.
 func getBillableFromGithub() {
 	for {
-		for _, repo := range config.Github.Repositories.Value() {
+		for _, repo := range repositories {
 			for k, v := range workflows[repo] {
 				r := strings.Split(repo, "/")
 				resp, _, err := client.Actions.GetWorkflowUsageByID(context.Background(), r[0], r[1], k)
