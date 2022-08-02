@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/google/go-github/github"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -27,14 +28,23 @@ func getBillableFromGithub() {
 		for _, repo := range repositories {
 			for k, v := range workflows[repo] {
 				r := strings.Split(repo, "/")
-				resp, _, err := client.Actions.GetWorkflowUsageByID(context.Background(), r[0], r[1], k)
-				if err != nil {
-					log.Printf("GetWorkflowUsageByID error for %s: %s", repo, err.Error())
-				} else {
+
+				for {
+					resp, _, err := client.Actions.GetWorkflowUsageByID(context.Background(), r[0], r[1], k)
+					if rl_err, ok := err.(*github.RateLimitError); ok {
+						log.Printf("GetWorkflowUsageByID ratelimited. Pausing until %s", rl_err.Rate.Reset.Time.String())
+						time.Sleep(time.Until(rl_err.Rate.Reset.Time))
+						continue
+					} else if err != nil {
+						log.Printf("GetWorkflowUsageByID error for %s: %s", repo, err.Error())
+						break
+					}
 					workflowBillGauge.WithLabelValues(repo, strconv.FormatInt(*v.ID, 10), *v.NodeID, *v.Name, *v.State, "MACOS").Set(float64(resp.GetBillable().MacOS.GetTotalMS()) / 1000)
 					workflowBillGauge.WithLabelValues(repo, strconv.FormatInt(*v.ID, 10), *v.NodeID, *v.Name, *v.State, "WINDOWS").Set(float64(resp.GetBillable().Windows.GetTotalMS()) / 1000)
 					workflowBillGauge.WithLabelValues(repo, strconv.FormatInt(*v.ID, 10), *v.NodeID, *v.Name, *v.State, "UBUNTU").Set(float64(resp.GetBillable().Ubuntu.GetTotalMS()) / 1000)
+					break
 				}
+
 			}
 		}
 

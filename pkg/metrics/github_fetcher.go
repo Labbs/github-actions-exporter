@@ -27,7 +27,11 @@ func getAllReposForOrg(orga string) []string {
 	}
 	for {
 		repos_page, resp, err := client.Repositories.ListByOrg(context.Background(), orga, opt)
-		if err != nil {
+		if rl_err, ok := err.(*github.RateLimitError); ok {
+			log.Printf("ListByOrg ratelimited. Pausing until %s", rl_err.Rate.Reset.Time.String())
+			time.Sleep(time.Until(rl_err.Rate.Reset.Time))
+			continue
+		} else if err != nil {
 			log.Printf("ListByOrg error for %s: %s", orga, err.Error())
 			break
 		}
@@ -52,7 +56,11 @@ func getAllWorkflowsForRepo(owner string, repo string) map[int64]github.Workflow
 
 	for {
 		workflows_page, resp, err := client.Actions.ListWorkflows(context.Background(), owner, repo, opt)
-		if err != nil {
+		if rl_err, ok := err.(*github.RateLimitError); ok {
+			log.Printf("ListWorkflows ratelimited. Pausing until %s", rl_err.Rate.Reset.Time.String())
+			time.Sleep(time.Until(rl_err.Rate.Reset.Time))
+			continue
+		} else if err != nil {
 			log.Printf("ListWorkflows error for %s: %s", repo, err.Error())
 			return res
 		}

@@ -58,40 +58,77 @@ func getRelevantFields(repo string, run *github.WorkflowRun) []string {
 	return result
 }
 
+func getAllWorkflowRuns(owner string, repo string) []*github.WorkflowRun {
+	var runs []*github.WorkflowRun
+	opt := &github.ListWorkflowRunsOptions{ListOptions: github.ListOptions{PerPage: 200}}
+
+	for {
+		resp, rr, err := client.Actions.ListRepositoryWorkflowRuns(context.Background(), owner, repo, opt)
+		if rl_err, ok := err.(*github.RateLimitError); ok {
+			log.Printf("ListRepositoryWorkflowRuns ratelimited. Pausing until %s", rl_err.Rate.Reset.Time.String())
+			time.Sleep(time.Until(rl_err.Rate.Reset.Time))
+			continue
+		} else if err != nil {
+			log.Printf("ListRepositoryWorkflowRuns error for repo %s/%s: %s", owner, repo, err.Error())
+			return runs
+		}
+
+		runs = append(runs, resp.WorkflowRuns...)
+		if rr.NextPage == 0 {
+			break
+		}
+		opt.Page = rr.NextPage
+	}
+
+	return runs
+}
+
+func getRunUsage(owner string, repo string, runId int64) *github.WorkflowRunUsage {
+	for {
+		resp, _, err := client.Actions.GetWorkflowRunUsageByID(context.Background(), owner, repo, runId)
+		if rl_err, ok := err.(*github.RateLimitError); ok {
+			log.Printf("GetWorkflowRunUsageByID ratelimited. Pausing until %s", rl_err.Rate.Reset.Time.String())
+			time.Sleep(time.Until(rl_err.Rate.Reset.Time))
+			continue
+		} else if err != nil {
+			log.Printf("GetWorkflowRunUsageByID error for repo %s/%s and runId %d: %s", owner, repo, runId, err.Error())
+			return nil
+		}
+		return resp
+	}
+}
+
 // getWorkflowRunsFromGithub - return informations and status about a workflow
 func getWorkflowRunsFromGithub() {
 	for {
 		for _, repo := range repositories {
 			r := strings.Split(repo, "/")
-			resp, _, err := client.Actions.ListRepositoryWorkflowRuns(context.Background(), r[0], r[1], nil)
-			if err != nil {
-				log.Printf("ListRepositoryWorkflowRuns error for %s: %s", repo, err.Error())
-			} else {
-				for _, run := range resp.WorkflowRuns {
-					var s float64 = 0
-					if run.GetConclusion() == "success" {
-						s = 1
-					} else if run.GetConclusion() == "skipped" {
-						s = 2
-					} else if run.GetConclusion() == "in_progress" {
-						s = 3
-					} else if run.GetConclusion() == "queued" {
-						s = 4
-					}
+			runs := getAllWorkflowRuns(r[0], r[1])
 
-					fields := getRelevantFields(repo, run)
+			for _, run := range runs {
+				var s float64 = 0
+				if run.GetConclusion() == "success" {
+					s = 1
+				} else if run.GetConclusion() == "skipped" {
+					s = 2
+				} else if run.GetConclusion() == "in_progress" {
+					s = 3
+				} else if run.GetConclusion() == "queued" {
+					s = 4
+				}
 
-					workflowRunStatusGauge.WithLabelValues(fields...).Set(s)
+				fields := getRelevantFields(repo, run)
 
-					resp, _, err := client.Actions.GetWorkflowRunUsageByID(context.Background(), r[0], r[1], *run.ID)
-					if err != nil { // Fallback for Github Enterprise
-						created := run.CreatedAt.Time.Unix()
-						updated := run.UpdatedAt.Time.Unix()
-						elapsed := updated - created
-						workflowRunDurationGauge.WithLabelValues(fields...).Set(float64(elapsed * 1000))
-					} else {
-						workflowRunDurationGauge.WithLabelValues(fields...).Set(float64(resp.GetRunDurationMS()))
-					}
+				workflowRunStatusGauge.WithLabelValues(fields...).Set(s)
+
+				run_usage := getRunUsage(r[0], r[1], *run.ID)
+				if run_usage == nil { // Fallback for Github Enterprise
+					created := run.CreatedAt.Time.Unix()
+					updated := run.UpdatedAt.Time.Unix()
+					elapsed := updated - created
+					workflowRunDurationGauge.WithLabelValues(fields...).Set(float64(elapsed * 1000))
+				} else {
+					workflowRunDurationGauge.WithLabelValues(fields...).Set(float64(run_usage.GetRunDurationMS()))
 				}
 			}
 		}
