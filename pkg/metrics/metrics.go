@@ -10,7 +10,7 @@ import (
 	"strings"
 
 	"github.com/bradleyfalzon/ghinstallation"
-	"github.com/google/go-github/v38/github"
+	"github.com/google/go-github/v45/github"
 	"github.com/gregjones/httpcache"
 	"github.com/prometheus/client_golang/prometheus"
 	"golang.org/x/oauth2"
@@ -28,14 +28,14 @@ func InitMetrics() {
 	workflowRunStatusGauge = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "github_workflow_run_status",
-			Help: "Workflow run status",
+			Help: "Workflow run status of all workflow runs created in the last 12hr",
 		},
 		strings.Split(config.WorkflowFields, ","),
 	)
 	workflowRunDurationGauge = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "github_workflow_run_duration_ms",
-			Help: "Workflow run duration (in milliseconds)",
+			Help: "Workflow run duration (in milliseconds) of all workflow runs created in the last 12hr",
 		},
 		strings.Split(config.WorkflowFields, ","),
 	)

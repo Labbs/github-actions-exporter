@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/go-github/v38/github"
+	"github.com/google/go-github/v45/github"
 )
 
 // getFieldValue return value from run element which corresponds to field
@@ -58,10 +58,14 @@ func getRelevantFields(repo string, run *github.WorkflowRun) []string {
 	return result
 }
 
-func getAllWorkflowRuns(owner string, repo string) []*github.WorkflowRun {
-	var runs []*github.WorkflowRun
-	opt := &github.ListWorkflowRunsOptions{ListOptions: github.ListOptions{PerPage: 200}}
+func getRecentWorkflowRuns(owner string, repo string) []*github.WorkflowRun {
+	window_start := time.Now().Add(time.Duration(-12) * time.Hour).Format(time.RFC3339)
+	opt := &github.ListWorkflowRunsOptions{
+		ListOptions: github.ListOptions{PerPage: 200},
+		Created:     ">=" + window_start,
+	}
 
+	var runs []*github.WorkflowRun
 	for {
 		resp, rr, err := client.Actions.ListRepositoryWorkflowRuns(context.Background(), owner, repo, opt)
 		if rl_err, ok := err.(*github.RateLimitError); ok {
@@ -103,7 +107,7 @@ func getWorkflowRunsFromGithub() {
 	for {
 		for _, repo := range repositories {
 			r := strings.Split(repo, "/")
-			runs := getAllWorkflowRuns(r[0], r[1])
+			runs := getRecentWorkflowRuns(r[0], r[1])
 
 			for _, run := range runs {
 				var s float64 = 0
