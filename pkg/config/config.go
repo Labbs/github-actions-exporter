@@ -14,6 +14,9 @@ var (
 		Organizations     cli.StringSlice
 		APIURL            string
 	}
+	Metrics struct {
+		FetchWorkflowRunUsage bool
+	}
 	Port           int
 	Debug          bool
 	EnterpriseName string
@@ -108,6 +111,13 @@ func InitConfiguration() []cli.Flag {
 			Usage:       "A comma separated list of fields for workflow metrics that should be exported",
 			Value:       "repo,id,node_id,head_branch,head_sha,run_number,workflow_id,workflow,event,status",
 			Destination: &WorkflowFields,
+		},
+		&cli.BoolFlag{
+			Name:        "fetch_workflow_run_usage",
+			EnvVars:     []string{"FETCH_WORKFLOW_RUN_USAGE"},
+			Usage:       "When true, will perform an API call per workflow run to fetch the workflow usage",
+			Value:       true,
+			Destination: &Metrics.FetchWorkflowRunUsage,
 		},
 	}
 }

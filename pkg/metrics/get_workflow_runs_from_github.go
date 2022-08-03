@@ -121,7 +121,10 @@ func getWorkflowRunsFromGithub() {
 
 				workflowRunStatusGauge.WithLabelValues(fields...).Set(s)
 
-				run_usage := getRunUsage(r[0], r[1], *run.ID)
+				var run_usage *github.WorkflowRunUsage = nil
+				if config.Metrics.FetchWorkflowRunUsage {
+					run_usage = getRunUsage(r[0], r[1], *run.ID)
+				}
 				if run_usage == nil { // Fallback for Github Enterprise
 					created := run.CreatedAt.Time.Unix()
 					updated := run.UpdatedAt.Time.Unix()
