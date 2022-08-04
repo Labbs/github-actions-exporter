@@ -13,6 +13,7 @@ var (
 		Repositories      cli.StringSlice
 		Organizations     cli.StringSlice
 		APIURL            string
+		CacheSizeBytes    int64
 	}
 	Metrics struct {
 		FetchWorkflowRunUsage bool
@@ -118,6 +119,13 @@ func InitConfiguration() []cli.Flag {
 			Usage:       "When true, will perform an API call per workflow run to fetch the workflow usage",
 			Value:       true,
 			Destination: &Metrics.FetchWorkflowRunUsage,
+		},
+		&cli.Int64Flag{
+			Name:        "github_cache_size_bytes",
+			EnvVars:     []string{"GITHUB_CACHE_SIZE_BYTES"},
+			Value:       100 * 1024 * 1024,
+			Usage:       "Size of Github HTTP cache in bytes",
+			Destination: &Github.CacheSizeBytes,
 		},
 	}
 }

@@ -5,6 +5,7 @@ go 1.16
 require (
 	github.com/andybalholm/brotli v1.0.3 // indirect
 	github.com/bradleyfalzon/ghinstallation v1.1.1
+	github.com/die-net/lrucache v0.0.0-20220628165024-20a71bc65bf1 // indirect
 	github.com/fasthttp/router v1.3.9
 	github.com/google/go-github v17.0.0+incompatible
 	github.com/google/go-github/v45 v45.2.0

@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/bradleyfalzon/ghinstallation"
+	"github.com/die-net/lrucache"
 	"github.com/google/go-github/v45/github"
 	"github.com/gregjones/httpcache"
 	"github.com/prometheus/client_golang/prometheus"
@@ -74,7 +75,8 @@ func NewClient() (*github.Client, error) {
 		cachedTransport *httpcache.Transport
 	)
 
-	cachedTransport = httpcache.NewMemoryCacheTransport()
+	cache := lrucache.New(config.Github.CacheSizeBytes, 0)
+	cachedTransport = httpcache.NewTransport(cache)
 
 	if len(config.Github.Token) > 0 {
 		log.Printf("authenticating with Github Token")
