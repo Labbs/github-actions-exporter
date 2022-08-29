@@ -12,12 +12,16 @@ var (
 		Refresh           int64
 		Repositories      cli.StringSlice
 		Organizations     cli.StringSlice
-		APIURL            string			
+		APIURL            string
+		CacheSizeBytes    int64
 	}
-	Port  int
-	Debug bool
-	EnterpriseName    string
-	WorkflowFields    string
+	Metrics struct {
+		FetchWorkflowRunUsage bool
+	}
+	Port           int
+	Debug          bool
+	EnterpriseName string
+	WorkflowFields string
 )
 
 // InitConfiguration - set configuration from env vars or command parameters
@@ -108,6 +112,20 @@ func InitConfiguration() []cli.Flag {
 			Usage:       "A comma separated list of fields for workflow metrics that should be exported",
 			Value:       "repo,id,node_id,head_branch,head_sha,run_number,workflow_id,workflow,event,status",
 			Destination: &WorkflowFields,
+		},
+		&cli.BoolFlag{
+			Name:        "fetch_workflow_run_usage",
+			EnvVars:     []string{"FETCH_WORKFLOW_RUN_USAGE"},
+			Usage:       "When true, will perform an API call per workflow run to fetch the workflow usage",
+			Value:       true,
+			Destination: &Metrics.FetchWorkflowRunUsage,
+		},
+		&cli.Int64Flag{
+			Name:        "github_cache_size_bytes",
+			EnvVars:     []string{"GITHUB_CACHE_SIZE_BYTES"},
+			Value:       100 * 1024 * 1024,
+			Usage:       "Size of Github HTTP cache in bytes",
+			Destination: &Github.CacheSizeBytes,
 		},
 	}
 }

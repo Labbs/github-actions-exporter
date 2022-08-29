@@ -10,7 +10,9 @@ import (
 	"strings"
 
 	"github.com/bradleyfalzon/ghinstallation"
-	"github.com/google/go-github/v38/github"
+	"github.com/die-net/lrucache"
+	"github.com/google/go-github/v45/github"
+	"github.com/gregjones/httpcache"
 	"github.com/prometheus/client_golang/prometheus"
 	"golang.org/x/oauth2"
 )
@@ -27,14 +29,14 @@ func InitMetrics() {
 	workflowRunStatusGauge = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "github_workflow_run_status",
-			Help: "Workflow run status",
+			Help: "Workflow run status of all workflow runs created in the last 12hr",
 		},
 		strings.Split(config.WorkflowFields, ","),
 	)
 	workflowRunDurationGauge = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "github_workflow_run_duration_ms",
-			Help: "Workflow run duration (in milliseconds)",
+			Help: "Workflow run duration (in milliseconds) of all workflow runs created in the last 12hr",
 		},
 		strings.Split(config.WorkflowFields, ","),
 	)
@@ -50,7 +52,7 @@ func InitMetrics() {
 		log.Fatalln("Error: Client creation failed." + err.Error())
 	}
 
-	go workflowCache()
+	go periodicGithubFetcher()
 
 	for {
 		if workflows != nil {
@@ -68,17 +70,22 @@ func InitMetrics() {
 // NewClient creates a Github Client
 func NewClient() (*github.Client, error) {
 	var (
-		httpClient *http.Client
-		client     *github.Client
-		transport  http.RoundTripper
+		httpClient      *http.Client
+		client          *github.Client
+		cachedTransport *httpcache.Transport
 	)
+
+	cache := lrucache.New(config.Github.CacheSizeBytes, 0)
+	cachedTransport = httpcache.NewTransport(cache)
+
 	if len(config.Github.Token) > 0 {
 		log.Printf("authenticating with Github Token")
-		transport = oauth2.NewClient(context.Background(), oauth2.StaticTokenSource(&oauth2.Token{AccessToken: config.Github.Token})).Transport
-		httpClient = &http.Client{Transport: transport}
+		ctx := context.Background()
+		ctx = context.WithValue(ctx, "HTTPClient", cachedTransport.Client())
+		httpClient = oauth2.NewClient(ctx, oauth2.StaticTokenSource(&oauth2.Token{AccessToken: config.Github.Token}))
 	} else {
 		log.Printf("authenticating with Github App")
-		tr, err := ghinstallation.NewKeyFromFile(http.DefaultTransport, config.Github.AppID, config.Github.AppInstallationID, config.Github.AppPrivateKey)
+		transport, err := ghinstallation.NewKeyFromFile(cachedTransport, config.Github.AppID, config.Github.AppInstallationID, config.Github.AppPrivateKey)
 		if err != nil {
 			return nil, fmt.Errorf("authentication failed: %v", err)
 		}
@@ -87,9 +94,9 @@ func NewClient() (*github.Client, error) {
 			if err != nil {
 				return nil, fmt.Errorf("enterprise url incorrect: %v", err)
 			}
-			tr.BaseURL = githubAPIURL
+			transport.BaseURL = githubAPIURL
 		}
-		httpClient = &http.Client{Transport: tr}
+		httpClient = &http.Client{Transport: transport}
 	}
 
 	if config.Github.APIURL != "api.github.com" {

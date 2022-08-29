@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/google/go-github/v38/github"
+	"github.com/google/go-github/v45/github"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -21,27 +21,40 @@ var (
 	)
 )
 
+func getAllOrgRunners(orga string) []*github.Runner {
+	var runners []*github.Runner
+	opt := &github.ListOptions{PerPage: 200}
+
+	for {
+		resp, rr, err := client.Actions.ListOrganizationRunners(context.Background(), orga, opt)
+		if rl_err, ok := err.(*github.RateLimitError); ok {
+			log.Printf("ListOrganizationRunners ratelimited. Pausing until %s", rl_err.Rate.Reset.Time.String())
+			time.Sleep(time.Until(rl_err.Rate.Reset.Time))
+			continue
+		} else if err != nil {
+			log.Printf("ListOrganizationRunners error for org %s: %s", orga, err.Error())
+			return runners
+		}
+
+		runners = append(runners, resp.Runners...)
+		if rr.NextPage == 0 {
+			break
+		}
+		opt.Page = rr.NextPage
+	}
+	return runners
+}
+
 // getRunnersOrganizationFromGithub - return information about runners and their status for an organization
 func getRunnersOrganizationFromGithub() {
 	for {
 		for _, orga := range config.Github.Organizations.Value() {
-			opt := &github.ListOptions{PerPage: 10}
-			for {
-				resp, rr, err := client.Actions.ListOrganizationRunners(context.Background(), orga, opt)
-				if err != nil {
-					log.Printf("ListOrganizationRunners error for %s: %s", orga, err.Error())
+			runners := getAllOrgRunners(orga)
+			for _, runner := range runners {
+				if runner.GetStatus() == "online" {
+					runnersOrganizationGauge.WithLabelValues(orga, *runner.OS, *runner.Name, strconv.FormatInt(runner.GetID(), 10), strconv.FormatBool(runner.GetBusy())).Set(1)
 				} else {
-					for _, runner := range resp.Runners {
-						if runner.GetStatus() == "online" {
-							runnersOrganizationGauge.WithLabelValues(orga, *runner.OS, *runner.Name, strconv.FormatInt(runner.GetID(), 10), strconv.FormatBool(runner.GetBusy())).Set(1)
-						} else {
-							runnersOrganizationGauge.WithLabelValues(orga, *runner.OS, *runner.Name, strconv.FormatInt(runner.GetID(), 10), strconv.FormatBool(runner.GetBusy())).Set(0)
-						}
-					}
-					if rr.NextPage == 0 {
-						break
-					}
-					opt.Page = rr.NextPage
+					runnersOrganizationGauge.WithLabelValues(orga, *runner.OS, *runner.Name, strconv.FormatInt(runner.GetID(), 10), strconv.FormatBool(runner.GetBusy())).Set(0)
 				}
 			}
 		}
