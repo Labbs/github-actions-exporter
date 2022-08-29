@@ -3,13 +3,14 @@ package metrics
 import (
 	"context"
 	"fmt"
-	"github-actions-exporter/pkg/config"
 	"log"
 	"net/http"
 	"net/url"
 	"strings"
 
-	"github.com/bradleyfalzon/ghinstallation"
+	"github.com/spendesk/github-actions-exporter/pkg/config"
+
+	"github.com/bradleyfalzon/ghinstallation/v2"
 	"github.com/die-net/lrucache"
 	"github.com/google/go-github/v45/github"
 	"github.com/gregjones/httpcache"
