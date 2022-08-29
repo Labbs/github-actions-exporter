@@ -2,11 +2,12 @@ package metrics
 
 import (
 	"context"
-	"github-actions-exporter/pkg/config"
 	"log"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/spendesk/github-actions-exporter/pkg/config"
 
 	"github.com/google/go-github/v45/github"
 )
