@@ -30,6 +30,7 @@ func getRunnersOrganizationFromGithub() {
 				resp, rr, err := client.Actions.ListOrganizationRunners(context.Background(), orga, opt)
 				if err != nil {
 					log.Printf("ListOrganizationRunners error for %s: %s", orga, err.Error())
+					break
 				} else {
 					for _, runner := range resp.Runners {
 						if runner.GetStatus() == "online" {
