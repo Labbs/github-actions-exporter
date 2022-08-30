@@ -16,4 +16,4 @@ jobs:
         with:
           charts_dir: deploy/helm-chart
           linting: off
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_TOKEN }}

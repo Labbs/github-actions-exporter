@@ -1,11 +1,14 @@
 # github-actions-exporter
 github-actions-exporter for prometheus
 
+![Release Build](https://github.com/labbs/github-actions-exporter/actions/workflows/release.yml/badge.svg)
+![GitHub all releases](https://img.shields.io/github/downloads/labbs/github-actions-exporter/total?label=Downloads)
+
 Container image : ghcr.io/labbs/github-actions-exporter
 
 Helm Chart :
 ```
- helm chart repo: https://Spendesk.github.io/github-actions-exporter/
+ helm chart repo: https://labbs.github.io/github-actions-exporter/
  chart: github-actions-exporter
  version: "0.1.4"
 ```
