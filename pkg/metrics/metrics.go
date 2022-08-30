@@ -8,7 +8,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/spendesk/github-actions-exporter/pkg/config"
+	"github.com/labbs/github-actions-exporter/pkg/config"
 
 	"github.com/bradleyfalzon/ghinstallation/v2"
 	"github.com/die-net/lrucache"
