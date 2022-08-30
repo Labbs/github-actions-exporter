@@ -1,4 +1,4 @@
-module github.com/spendesk/github-actions-exporter
+module github.com/labbs/github-actions-exporter
 
 go 1.18
 

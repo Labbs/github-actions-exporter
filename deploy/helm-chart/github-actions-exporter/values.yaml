@@ -1,7 +1,7 @@
 # Default values for github-actions-exporter.
 
 image:
-  repository: spendeskplatform/github-actions-exporter
+  repository: ghcr.io/labbs/github-actions-exporter
   pullPolicy: IfNotPresent
   tag: "v1.8.0"
 
