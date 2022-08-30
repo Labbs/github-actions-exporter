@@ -23,6 +23,7 @@ Authentication can either via a Github Token or the Github App Authentication 3 
 
 
 ## Options
+
 | Name | Flag | Env vars | Default | Description |
 |---|---|---|---|---|
 | Github Token | github_token, gt | GITHUB_TOKEN | - | Personnel Access Token |
