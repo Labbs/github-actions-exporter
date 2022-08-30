@@ -2,9 +2,10 @@ name: Release Chart
 on:
   push:
     branches:
-      - master
+      - main
     paths: 
       - "deploy/helm-chart/**"
+      - "README.md"
 
 jobs:
   release:
@@ -16,4 +17,4 @@ jobs:
         with:
           charts_dir: deploy/helm-chart
           linting: off
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_TOKEN }}
