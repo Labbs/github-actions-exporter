@@ -1,11 +1,7 @@
 # github-actions-exporter
 github-actions-exporter for prometheus
 
-![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/spendeskplatform/github-actions-exporter)
-![Docker Pulls](https://img.shields.io/docker/pulls/spendeskplatform/github-actions-exporter)
-[![Go Report Card](https://goreportcard.com/badge/github.com/Spendesk/github-actions-exporter)](https://goreportcard.com/report/github.com/Spendesk/github-actions-exporter)
-
-Container image : https://hub.docker.com/repository/docker/spendeskplatform/github-actions-exporter
+Container image : ghcr.io/labbs/github-actions-exporter
 
 Helm Chart :
 ```
@@ -32,7 +28,7 @@ Authentication can either via a Github Token or the Github App Authentication 3 
 | Github App Private Key | app_private_key, gpk | GITHUB_APP_PRIVATE_KEY | - | Github App Authentication Private Key |
 | Github Refresh | github_refresh, gr | GITHUB_REFRESH | 30 | Refresh time Github Actions status in sec |
 | Github Organizations | github_orgas, go | GITHUB_ORGAS | - | List all organizations you want get informations. Format \<orga1>,\<orga2>,\<orga3> (like test1,test2) |
-| Github Repos | github_repos, grs | GITHUB_REPOS | - | List all repositories you want get informations. Format \<orga>/\<repo>,\<orga>/\<repo2>,\<orga>/\<repo3> (like test/test) |
+| Github Repos | github_repos, grs | GITHUB_REPOS | - | [Optional] List all repositories you want get informations. Format \<orga>/\<repo>,\<orga>/\<repo2>,\<orga>/\<repo3> (like test/test). Defaults to all repositories owned by the organizations. |
 | Exporter port | port, p | PORT | 9999 | Exporter port |
 | Github Api URL | github_api_url, url | GITHUB_API_URL | api.github.com | Github API URL (primarily for Github Enterprise usage) |
 | Github Enterprise Name | enterprise_name | ENTERPRISE_NAME | "" | Enterprise name. Needed for enterprise endpoints (/enterprises/{ENTERPRISE_NAME}/*). Currently used to get Enterprise level tunners status |
@@ -51,6 +47,7 @@ Gauge type
 | 1 | Success |
 | 2 | Skipped |
 | 3 | In Progress |
+| 4 | Queued |
 
 **Fields**
 
@@ -112,6 +109,7 @@ Gauge type
 | os | Operating system (linux/macos/windows) |
 | repo | Repository like \<org>/\<repo> |
 | status | Runner status (online/offline) |
+| busy | Runner busy or not (true/false) |
 
 ### github_runner_organization_status
 Gauge type
@@ -133,6 +131,7 @@ Gauge type
 | os | Operating system (linux/macos/windows) |
 | orga | Organization name |
 | status | Runner status (online/offline) |
+| busy | Runner busy or not (true/false) |
 
 ### github_runner_enterprise_status
 Gauge type
