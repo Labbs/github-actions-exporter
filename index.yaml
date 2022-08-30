@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  github-actions-exporter:
+  - apiVersion: v2
+    appVersion: 1.8.1
+    created: "2022-08-30T23:34:26.731669997Z"
+    description: github-actions exporter for prometheus
+    digest: c11aa69dee2ce4827b62be73b3e50fd726fd4ca0eb722edfb83846cbbaf513d2
+    name: github-actions-exporter
+    type: application
+    urls:
+    - https://Labbs.github.io/github-actions-exporter/github-actions-exporter-0.1.4.tgz
+    version: 0.1.4
+generated: "2022-08-30T23:34:26.730676491Z"
