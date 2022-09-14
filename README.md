@@ -212,6 +212,7 @@ repo
 admin:org
   - write:org
   - read:org
+  - manage_runners:org
 ```
 
 ### Authentication Errors
