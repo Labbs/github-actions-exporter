@@ -12,7 +12,6 @@ import (
 
 var (
 	version = "development"
-	logger  = logging.GetLogger()
 )
 
 func main() {
@@ -21,6 +20,8 @@ func main() {
 	app.Flags = config.InitConfiguration()
 	app.Version = version
 	app.Action = server.RunServer
+
+	logger := logging.GetLogger()
 
 	err := app.Run(os.Args)
 

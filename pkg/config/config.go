@@ -22,6 +22,7 @@ var (
 	Debug          bool
 	EnterpriseName string
 	WorkflowFields string
+	LogStructured  bool
 )
 
 // InitConfiguration - set configuration from env vars or command parameters
@@ -126,6 +127,13 @@ func InitConfiguration() []cli.Flag {
 			Value:       100 * 1024 * 1024,
 			Usage:       "Size of Github HTTP cache in bytes",
 			Destination: &Github.CacheSizeBytes,
+		},
+		&cli.BoolFlag{
+			Name:        "log_structured",
+			EnvVars:     []string{"LOG_STRUCTURED"},
+			Usage:       "Log output in a structured format",
+			Value:       false,
+			Destination: &LogStructured,
 		},
 	}
 }
