@@ -1,17 +1,18 @@
 package main
 
 import (
-	"log"
 	"os"
 
 	"github.com/urfave/cli/v2"
 
 	"github.com/spendesk/github-actions-exporter/pkg/config"
+	"github.com/spendesk/github-actions-exporter/pkg/logging"
 	"github.com/spendesk/github-actions-exporter/pkg/server"
 )
 
 var (
 	version = "development"
+	logger  = logging.GetLogger()
 )
 
 func main() {
@@ -22,7 +23,8 @@ func main() {
 	app.Action = server.RunServer
 
 	err := app.Run(os.Args)
+
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal(err)
 	}
 }

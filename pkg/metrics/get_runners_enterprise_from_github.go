@@ -2,7 +2,6 @@ package metrics
 
 import (
 	"context"
-	"log"
 	"strconv"
 	"time"
 
@@ -29,11 +28,11 @@ func getAllEnterpriseRunners() []*github.Runner {
 	for {
 		resp, rr, err := client.Enterprise.ListRunners(context.Background(), config.EnterpriseName, nil)
 		if rl_err, ok := err.(*github.RateLimitError); ok {
-			log.Printf("ListRunners ratelimited. Pausing until %s", rl_err.Rate.Reset.Time.String())
+			logger.Infof("ListRunners ratelimited. Pausing until %s", rl_err.Rate.Reset.Time.String())
 			time.Sleep(time.Until(rl_err.Rate.Reset.Time))
 			continue
 		} else if err != nil {
-			log.Printf("ListRunners error for enterprise %s: %s", config.EnterpriseName, err.Error())
+			logger.Infof("ListRunners error for enterprise %s: %s", config.EnterpriseName, err.Error())
 			return nil
 		}
 

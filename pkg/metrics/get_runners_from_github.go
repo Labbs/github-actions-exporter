@@ -2,7 +2,6 @@ package metrics
 
 import (
 	"context"
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -30,11 +29,11 @@ func getAllRepoRunners(owner string, repo string) []*github.Runner {
 	for {
 		resp, rr, err := client.Actions.ListRunners(context.Background(), owner, repo, opt)
 		if rl_err, ok := err.(*github.RateLimitError); ok {
-			log.Printf("ListRunners ratelimited. Pausing until %s", rl_err.Rate.Reset.Time.String())
+			logger.Infof("ListRunners ratelimited. Pausing until %s", rl_err.Rate.Reset.Time.String())
 			time.Sleep(time.Until(rl_err.Rate.Reset.Time))
 			continue
 		} else if err != nil {
-			log.Printf("ListRunners error for repo %s: %s", repo, err.Error())
+			logger.Infof("ListRunners error for repo %s: %s", repo, err.Error())
 			return nil
 		}
 

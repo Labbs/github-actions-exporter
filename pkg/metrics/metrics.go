@@ -3,12 +3,12 @@ package metrics
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"net/url"
 	"strings"
 
 	"github.com/spendesk/github-actions-exporter/pkg/config"
+	"github.com/spendesk/github-actions-exporter/pkg/logging"
 
 	"github.com/bradleyfalzon/ghinstallation/v2"
 	"github.com/die-net/lrucache"
@@ -23,6 +23,7 @@ var (
 	err                      error
 	workflowRunStatusGauge   *prometheus.GaugeVec
 	workflowRunDurationGauge *prometheus.GaugeVec
+	logger                   = logging.GetLogger()
 )
 
 // InitMetrics - register metrics in prometheus lib and start func for monitor
@@ -50,7 +51,7 @@ func InitMetrics() {
 
 	client, err = NewClient()
 	if err != nil {
-		log.Fatalln("Error: Client creation failed." + err.Error())
+		logger.Fatalln("Error: Client creation failed." + err.Error())
 	}
 
 	go periodicGithubFetcher()
@@ -80,12 +81,12 @@ func NewClient() (*github.Client, error) {
 	cachedTransport = httpcache.NewTransport(cache)
 
 	if len(config.Github.Token) > 0 {
-		log.Printf("authenticating with Github Token")
+		logger.Info("authenticating with Github Token")
 		ctx := context.Background()
 		ctx = context.WithValue(ctx, "HTTPClient", cachedTransport.Client())
 		httpClient = oauth2.NewClient(ctx, oauth2.StaticTokenSource(&oauth2.Token{AccessToken: config.Github.Token}))
 	} else {
-		log.Printf("authenticating with Github App")
+		logger.Info("authenticating with Github App")
 		transport, err := ghinstallation.NewKeyFromFile(cachedTransport, config.Github.AppID, config.Github.AppInstallationID, config.Github.AppPrivateKey)
 		if err != nil {
 			return nil, fmt.Errorf("authentication failed: %v", err)
