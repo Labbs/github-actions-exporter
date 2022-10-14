@@ -7,13 +7,7 @@ import (
 	"go.uber.org/zap"
 )
 
-var logger *zap.SugaredLogger
-
-func GetLogger() *zap.SugaredLogger {
-	if logger != nil {
-		return logger
-	}
-
+func InitLogger() *zap.SugaredLogger {
 	var (
 		freshLogger *zap.Logger
 		err         error
@@ -30,6 +24,5 @@ func GetLogger() *zap.SugaredLogger {
 		log.Fatalf("Can't initialize logger: %v", err)
 	}
 
-	logger = freshLogger.Sugar()
-	return logger
+	return freshLogger.Sugar()
 }

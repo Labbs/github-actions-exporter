@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/urfave/cli/v2"
+	"go.uber.org/zap"
 
 	"github.com/spendesk/github-actions-exporter/pkg/config"
 	"github.com/spendesk/github-actions-exporter/pkg/logging"
@@ -12,16 +13,20 @@ import (
 
 var (
 	version = "development"
+	logger  *zap.SugaredLogger
 )
 
 func main() {
-	app := cli.NewApp()
-	app.Name = "github-actions-exporter"
-	app.Flags = config.InitConfiguration()
-	app.Version = version
-	app.Action = server.RunServer
-
-	logger := logging.GetLogger()
+	app := &cli.App{
+		Name:  "github-actions-exporter",
+		Flags: config.InitConfiguration(),
+		Action: func(ctx *cli.Context) error {
+			logger = logging.InitLogger()
+			server.RunServer(ctx, logger)
+			return nil
+		},
+		Version: version,
+	}
 
 	err := app.Run(os.Args)
 

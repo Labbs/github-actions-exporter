@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/spendesk/github-actions-exporter/pkg/config"
-	"github.com/spendesk/github-actions-exporter/pkg/logging"
+	"go.uber.org/zap"
 
 	"github.com/bradleyfalzon/ghinstallation/v2"
 	"github.com/die-net/lrucache"
@@ -23,11 +23,12 @@ var (
 	err                      error
 	workflowRunStatusGauge   *prometheus.GaugeVec
 	workflowRunDurationGauge *prometheus.GaugeVec
-	logger                   = logging.GetLogger()
+	logger                   *zap.SugaredLogger
 )
 
 // InitMetrics - register metrics in prometheus lib and start func for monitor
-func InitMetrics() {
+func InitMetrics(freshLogger *zap.SugaredLogger) {
+	logger = freshLogger
 	workflowRunStatusGauge = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "github_workflow_run_status",
