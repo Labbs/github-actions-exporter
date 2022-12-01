@@ -1,0 +1,9 @@
+extends: default
+rules:
+  document-start: disable
+  line-length:
+    max: 160
+    level: warning
+  brackets:
+    min-spaces-inside: 0
+    max-spaces-inside: 1

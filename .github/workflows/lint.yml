@@ -1,0 +1,81 @@
+name: Lint
+
+on:
+  workflow_call:
+
+  push:
+    branches: [main]
+
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: lint-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-commits:
+    runs-on: ubuntu-22.04
+    if: github.actor != 'dependabot[bot]'
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Check commits
+        uses: wagoid/commitlint-github-action@v4
+
+  lint-yaml:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Lint yaml files
+        uses: ibiqlik/action-yamllint@v3.1.1
+
+  lint-dockerfile:
+    runs-on: ubuntu-22.04
+    if: github.actor != 'dependabot[bot]'
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Lint dockerfile (hadolint)
+        uses: hadolint/hadolint-action@v2.1.0
+
+  lint-branch-name:
+    runs-on: ubuntu-22.04
+    if: github.actor != 'dependabot[bot]' && github.event_name == 'pull_request' && (github.event.action == 'opened' || github.event.action == 'reopened')
+    steps:
+      - name: Check branch name conventions
+        uses: AlbertHernandez/branch-name-action@v1.0.2
+        with:
+          branch_pattern: "feat|fix|build|ci|docs|style|refactor|perf|test|chore"
+          comment_for_invalid_branch_name: |
+            🙋‍ Oops! This branch name does not follow the naming convention.
+            <hr>
+            Please, see the following branch naming convention:
+            Branch naming convention | Purpose
+            ------------------------ | -------
+            `feat/**`                | A new feature
+            `fix/**`                 | A bug fix
+            `build/**`               | Changes that affect the build system (npm, mavem, poetry)
+            `ci/**`                  | Changes to the CI configuration
+            `docs/**`                | Documentation only changes
+            `style/**`               | Changes that do not affect the meaning of the code (white-space, formatting, missing semi-colons, etc)
+            `refactor/**`            | Code changes that neither fixe a bug nor adds a feature
+            `perf/**`                | Code changes that improve performance
+            `test/**`                | When adding tests or correcting existing tests
+            `chore/**`               | Other changes that don't modify source
+          fail_if_invalid_branch_name: "true"
+          ignore_branch_pattern: "main"
+      - name: Close non-compliant branch
+        if: ${{ failure() }}
+        uses: codelytv/no-pull-requests@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.OKP4_TOKEN }}
+          message: 🙅 Closing the PR because it does not respect naming conventions. Edit the branch name and submit a new PR.
+    env:
+      GITHUB_TOKEN: ${{ secrets.OKP4_TOKEN }}
