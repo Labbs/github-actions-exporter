@@ -34,6 +34,8 @@ jobs:
 
       - name: Lint yaml files
         uses: ibiqlik/action-yamllint@v3.1.1
+        with:
+          file_or_dir: .github/workflows/lint.yml .github/workflows/publish-pr.yml
 
   lint-dockerfile:
     runs-on: ubuntu-22.04
