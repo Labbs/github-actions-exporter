@@ -1,0 +1,49 @@
+name: PR Publish
+
+on:
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+  publish-docker-images:
+    if: ${{ github.event.issue.pull_request && github.event.comment.body  == '/publish' }}
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: xt0rted/pull-request-comment-branch@v1
+        id: comment-branch
+
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ steps.comment-branch.outputs.head_ref }}
+
+      - uses: gacts/github-slug@v1
+        id: slug
+        with:
+          to-slug: ${{ steps.comment-branch.outputs.head_ref }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: docker_metadata
+        uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=raw,value=${{ steps.slug.outputs.slug }}
+          labels: |
+            org.opencontainers.image.vendor=OKP4
+
+      - name: Login to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ secrets.DOCKER_REGISTRY_ID }}
+          password: ${{ secrets.DOCKER_REGISTRY_TOKEN }}
+
+      - name: Build and publish image(s)
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          tags: ${{ steps.docker_metadata.outputs.tags }}
+          labels: ${{ steps.docker_metadata.outputs.labels }}

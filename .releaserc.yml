@@ -1,0 +1,35 @@
+branches:
+  - main
+
+plugins:
+  - - "@semantic-release/commit-analyzer"
+    - preset: conventionalcommits
+  - - "@semantic-release/release-notes-generator"
+    - preset: conventionalcommits
+  - - "@semantic-release/changelog"
+    - changelogFile: CHANGELOG.md
+      changelogTitle: "# ØKP4 github-actions-exporter changelog"
+  - - "@google/semantic-release-replace-plugin"
+    - replacements:
+        - files: [version]
+          from: ^.+$
+          to: ${nextRelease.version}
+          countMatches: true
+          results:
+            - file: version
+              hasChanged: true
+              numMatches: 1
+              numReplacements: 1
+  - - "@semantic-release/exec"
+    - prepareCmd: |
+        make build-go-linux-amd64
+  - - "@semantic-release/github"
+    - assets:
+        - name: okp4d_linux_amd64
+          label: Binary - Linux amd64
+          path: "./target/dist/linux/amd64/github-actions-exporter"
+  - - "@semantic-release/git"
+    - assets:
+        - CHANGELOG.md
+        - version
+      message: "chore(release): perform release ${nextRelease.version}"
