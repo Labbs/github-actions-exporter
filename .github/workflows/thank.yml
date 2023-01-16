@@ -1,0 +1,30 @@
+name: Give thanks
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  give-thanks:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Find changed dependencies
+        id: changed-dependencies
+        uses: tj-actions/changed-files@v35.2.1
+        with:
+          files: |
+            go.mod
+
+      - name: Give thanks!
+        if: steps.changed-dependencies.outputs.any_changed == 'true' || github.event_name == 'workflow_dispatch'
+        run: |
+          docker run --rm \
+            -v $(pwd):/home \
+            psampaz/gothanks:v0.4.0 \
+            -y \
+            -github-token=${{ secrets.OKP4_TOKEN }}
