@@ -18,7 +18,7 @@ jobs:
 
       - name: Set up context
         id: project_context
-        uses: FranzDiebold/github-env-vars-action@v2.3.1
+        uses: FranzDiebold/github-env-vars-action@v2
 
       - name: Extract metadata (tags, labels) for Docker
         id: docker_metadata

@@ -24,7 +24,7 @@ jobs:
           fetch-depth: 0
 
       - name: Check commits
-        uses: wagoid/commitlint-github-action@v4
+        uses: wagoid/commitlint-github-action@v5
 
   lint-yaml:
     runs-on: ubuntu-22.04
@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Lint dockerfile (hadolint)
-        uses: hadolint/hadolint-action@v2.1.0
+        uses: hadolint/hadolint-action@v3.0.0
 
   lint-branch-name:
     runs-on: ubuntu-22.04
