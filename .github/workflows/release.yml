@@ -8,10 +8,15 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.actor == 'bot-anik'
     uses: ./.github/workflows/lint.yml
 
+  build:
+    if: github.ref == 'refs/heads/main' && github.actor == 'bot-anik'
+    uses: ./.github/workflows/build.yml
+
   perfom-release:
     if: github.ref == 'refs/heads/main' && github.actor == 'bot-anik'
     needs:
       - lint
+      - build
     runs-on: ubuntu-22.04
     steps:
       - name: Check out repository
