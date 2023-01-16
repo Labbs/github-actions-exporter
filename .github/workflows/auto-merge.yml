@@ -1,0 +1,15 @@
+name: Auto merge
+
+on:
+  pull_request:
+
+jobs:
+  auto-merge-dependabot:
+    runs-on: ubuntu-22.04
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: Auto merge PR
+        uses: ahmadnassri/action-dependabot-auto-merge@v2
+        with:
+          target: minor
+          github-token: ${{ secrets.OKP4_TOKEN }}
