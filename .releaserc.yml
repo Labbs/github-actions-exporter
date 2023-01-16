@@ -24,10 +24,6 @@ plugins:
     - prepareCmd: |
         make build-go-linux-amd64
   - - "@semantic-release/github"
-    - assets:
-        - name: okp4d_linux_amd64
-          label: Binary - Linux amd64
-          path: "./target/dist/linux/amd64/github-actions-exporter"
   - - "@semantic-release/git"
     - assets:
         - CHANGELOG.md
