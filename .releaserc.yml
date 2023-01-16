@@ -20,9 +20,6 @@ plugins:
               hasChanged: true
               numMatches: 1
               numReplacements: 1
-  - - "@semantic-release/exec"
-    - prepareCmd: |
-        make build-go-linux-amd64
   - - "@semantic-release/github"
   - - "@semantic-release/git"
     - assets:

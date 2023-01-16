@@ -36,7 +36,6 @@ jobs:
           branch: main
           extra_plugins: |
             @semantic-release/changelog
-            @semantic-release/exec
             @semantic-release/git
             @google/semantic-release-replace-plugin
           extends: |
