@@ -5,11 +5,11 @@ on:
 
 jobs:
   lint:
-    if: github.ref == 'refs/heads/main' && github.app == 'bot-anik'
+    if: github.ref == 'refs/heads/main' && github.actor == 'bot-anik'
     uses: ./.github/workflows/lint.yml
 
   perfom-release:
-    if: github.ref == 'refs/heads/main' && github.app == 'bot-anik'
+    if: github.ref == 'refs/heads/main' && github.actor == 'bot-anik'
     needs:
       - lint
     runs-on: ubuntu-22.04
