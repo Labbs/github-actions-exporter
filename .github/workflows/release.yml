@@ -25,12 +25,12 @@ jobs:
           token: ${{ secrets.OKP4_TOKEN }}
 
       - name: Setup Go environment
-        uses: actions/setup-go@v3.3.1
+        uses: actions/setup-go@v3
         with:
           go-version: "1.19"
 
       - name: Release project
-        uses: cycjimmy/semantic-release-action@v2
+        uses: cycjimmy/semantic-release-action@v3.2.0
         with:
           semantic_version: 19.0.2
           branch: main
