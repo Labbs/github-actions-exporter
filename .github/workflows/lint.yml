@@ -57,7 +57,9 @@ jobs:
           branch_pattern: "feat|fix|build|ci|docs|style|refactor|perf|test|chore"
           comment_for_invalid_branch_name: |
             🙋‍ Oops! This branch name does not follow the naming convention.
+            +
             <hr>
+            +
             Please, see the following branch naming convention:
             Branch naming convention | Purpose
             ------------------------ | -------
