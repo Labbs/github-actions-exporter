@@ -1,3 +1,7 @@
+# PLEASE THIS REPO IS NOT MAINTAIN ANYMORE AND WILL BE ARCHIVED SOON
+
+
+
 # github-actions-exporter
 github-actions-exporter for prometheus
 
