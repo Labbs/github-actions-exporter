@@ -65,5 +65,6 @@ func getRunnersFromGithub() {
 		}
 
 		time.Sleep(time.Duration(config.Github.Refresh) * time.Second)
+		runnersGauge.Reset()
 	}
 }
