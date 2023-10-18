@@ -2,7 +2,6 @@ package metrics
 
 import (
 	"context"
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -32,12 +31,12 @@ func getFieldValue(repo string, run github.WorkflowRun, field string) string {
 	case "workflow":
 		r, exist := workflows[repo]
 		if !exist {
-			log.Printf("Couldn't fetch repo '%s' from workflow cache.", repo)
+			logger.Infof("Couldn't fetch repo '%s' from workflow cache.", repo)
 			return "unknown"
 		}
 		w, exist := r[*run.WorkflowID]
 		if !exist {
-			log.Printf("Couldn't fetch repo '%s', workflow '%d' from workflow cache.", repo, *run.WorkflowID)
+			logger.Infof("Couldn't fetch repo '%s', workflow '%d' from workflow cache.", repo, *run.WorkflowID)
 			return "unknown"
 		}
 		return *w.Name
@@ -46,7 +45,7 @@ func getFieldValue(repo string, run github.WorkflowRun, field string) string {
 	case "status":
 		return *run.Status
 	}
-	log.Printf("Tried to fetch invalid field '%s'", field)
+	logger.Infof("Tried to fetch invalid field '%s'", field)
 	return ""
 }
 
@@ -70,11 +69,11 @@ func getRecentWorkflowRuns(owner string, repo string) []*github.WorkflowRun {
 	for {
 		resp, rr, err := client.Actions.ListRepositoryWorkflowRuns(context.Background(), owner, repo, opt)
 		if rl_err, ok := err.(*github.RateLimitError); ok {
-			log.Printf("ListRepositoryWorkflowRuns ratelimited. Pausing until %s", rl_err.Rate.Reset.Time.String())
+			logger.Infof("ListRepositoryWorkflowRuns ratelimited. Pausing until %s", rl_err.Rate.Reset.Time.String())
 			time.Sleep(time.Until(rl_err.Rate.Reset.Time))
 			continue
 		} else if err != nil {
-			log.Printf("ListRepositoryWorkflowRuns error for repo %s/%s: %s", owner, repo, err.Error())
+			logger.Infof("ListRepositoryWorkflowRuns error for repo %s/%s: %s", owner, repo, err.Error())
 			return runs
 		}
 
@@ -92,11 +91,11 @@ func getRunUsage(owner string, repo string, runId int64) *github.WorkflowRunUsag
 	for {
 		resp, _, err := client.Actions.GetWorkflowRunUsageByID(context.Background(), owner, repo, runId)
 		if rl_err, ok := err.(*github.RateLimitError); ok {
-			log.Printf("GetWorkflowRunUsageByID ratelimited. Pausing until %s", rl_err.Rate.Reset.Time.String())
+			logger.Infof("GetWorkflowRunUsageByID ratelimited. Pausing until %s", rl_err.Rate.Reset.Time.String())
 			time.Sleep(time.Until(rl_err.Rate.Reset.Time))
 			continue
 		} else if err != nil {
-			log.Printf("GetWorkflowRunUsageByID error for repo %s/%s and runId %d: %s", owner, repo, runId, err.Error())
+			logger.Infof("GetWorkflowRunUsageByID error for repo %s/%s and runId %d: %s", owner, repo, runId, err.Error())
 			return nil
 		}
 		return resp

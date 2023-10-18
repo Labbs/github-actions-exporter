@@ -2,7 +2,6 @@ package metrics
 
 import (
 	"context"
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -33,11 +32,11 @@ func getBillableFromGithub() {
 				for {
 					resp, _, err := client.Actions.GetWorkflowUsageByID(context.Background(), r[0], r[1], k)
 					if rl_err, ok := err.(*github.RateLimitError); ok {
-						log.Printf("GetWorkflowUsageByID ratelimited. Pausing until %s", rl_err.Rate.Reset.Time.String())
+						logger.Infof("GetWorkflowUsageByID ratelimited. Pausing until %s", rl_err.Rate.Reset.Time.String())
 						time.Sleep(time.Until(rl_err.Rate.Reset.Time))
 						continue
 					} else if err != nil {
-						log.Printf("GetWorkflowUsageByID error for %s: %s", repo, err.Error())
+						logger.Infof("GetWorkflowUsageByID error for %s: %s", repo, err.Error())
 						break
 					}
 					workflowBillGauge.WithLabelValues(repo, strconv.FormatInt(*v.ID, 10), *v.NodeID, *v.Name, *v.State, "MACOS").Set(float64(resp.GetBillable().MacOS.GetTotalMS()) / 1000)

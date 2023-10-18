@@ -2,7 +2,6 @@ package metrics
 
 import (
 	"context"
-	"log"
 	"strings"
 	"time"
 
@@ -28,11 +27,11 @@ func getAllReposForOrg(orga string) []string {
 	for {
 		repos_page, resp, err := client.Repositories.ListByOrg(context.Background(), orga, opt)
 		if rl_err, ok := err.(*github.RateLimitError); ok {
-			log.Printf("ListByOrg ratelimited. Pausing until %s", rl_err.Rate.Reset.Time.String())
+			logger.Infof("ListByOrg ratelimited. Pausing until %s", rl_err.Rate.Reset.Time.String())
 			time.Sleep(time.Until(rl_err.Rate.Reset.Time))
 			continue
 		} else if err != nil {
-			log.Printf("ListByOrg error for %s: %s", orga, err.Error())
+			logger.Infof("ListByOrg error for %s: %s", orga, err.Error())
 			break
 		}
 		for _, repo := range repos_page {
@@ -57,11 +56,11 @@ func getAllWorkflowsForRepo(owner string, repo string) map[int64]github.Workflow
 	for {
 		workflows_page, resp, err := client.Actions.ListWorkflows(context.Background(), owner, repo, opt)
 		if rl_err, ok := err.(*github.RateLimitError); ok {
-			log.Printf("ListWorkflows ratelimited. Pausing until %s", rl_err.Rate.Reset.Time.String())
+			logger.Infof("ListWorkflows ratelimited. Pausing until %s", rl_err.Rate.Reset.Time.String())
 			time.Sleep(time.Until(rl_err.Rate.Reset.Time))
 			continue
 		} else if err != nil {
-			log.Printf("ListWorkflows error for %s: %s", repo, err.Error())
+			logger.Infof("ListWorkflows error for %s: %s", repo, err.Error())
 			return res
 		}
 		for _, w := range workflows_page.Workflows {
@@ -101,7 +100,7 @@ func periodicGithubFetcher() {
 			}
 			non_empty_repos = append(non_empty_repos, repo)
 			ww[repo] = workflows_for_repo
-			log.Printf("Fetched %d workflows for repository %s", len(ww[repo]), repo)
+			logger.Infof("Fetched %d workflows for repository %s", len(ww[repo]), repo)
 		}
 		repositories = non_empty_repos
 		workflows = ww

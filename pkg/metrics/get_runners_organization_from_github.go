@@ -2,7 +2,6 @@ package metrics
 
 import (
 	"context"
-	"log"
 	"strconv"
 	"time"
 
@@ -29,11 +28,11 @@ func getAllOrgRunners(orga string) []*github.Runner {
 	for {
 		resp, rr, err := client.Actions.ListOrganizationRunners(context.Background(), orga, opt)
 		if rl_err, ok := err.(*github.RateLimitError); ok {
-			log.Printf("ListOrganizationRunners ratelimited. Pausing until %s", rl_err.Rate.Reset.Time.String())
+			logger.Infof("ListOrganizationRunners ratelimited. Pausing until %s", rl_err.Rate.Reset.Time.String())
 			time.Sleep(time.Until(rl_err.Rate.Reset.Time))
 			continue
 		} else if err != nil {
-			log.Printf("ListOrganizationRunners error for org %s: %s", orga, err.Error())
+			logger.Infof("ListOrganizationRunners error for org %s: %s", orga, err.Error())
 			return runners
 		}
 

@@ -22,6 +22,7 @@ var (
 	Debug          bool
 	EnterpriseName string
 	WorkflowFields string
+	LogFormat      string
 )
 
 // InitConfiguration - set configuration from env vars or command parameters
@@ -126,6 +127,13 @@ func InitConfiguration() []cli.Flag {
 			Value:       100 * 1024 * 1024,
 			Usage:       "Size of Github HTTP cache in bytes",
 			Destination: &Github.CacheSizeBytes,
+		},
+		&cli.StringFlag{
+			Name:        "log_format",
+			EnvVars:     []string{"LOG_FORMAT"},
+			Usage:       "Log output format. Valid formats: json, plain",
+			Value:       "json",
+			Destination: &LogFormat,
 		},
 	}
 }
