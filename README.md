@@ -1,6 +1,7 @@
-# PLEASE THIS REPO IS NOT MAINTAIN ANYMORE AND WILL BE ARCHIVED SOON
-
-
+## Change of organization
+The project was migrated to another organization because it was no longer maintained.
+In the coming weeks, changes will be made on various points (code and container image) and also an update of all the libraries.
+If there are feature requests, you can make them in the issues. For a better understanding of the requested features, having a detailed description or example will be greatly appreciated.
 
 # github-actions-exporter
 github-actions-exporter for prometheus
