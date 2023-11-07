@@ -6,15 +6,14 @@ If there are feature requests, you can make them in the issues. For a better und
 # github-actions-exporter
 github-actions-exporter for prometheus
 
-![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/spendeskplatform/github-actions-exporter)
-![Docker Pulls](https://img.shields.io/docker/pulls/spendeskplatform/github-actions-exporter)
+![Release pipeline](https://github.com/Labbs/github-actions-exporter/actions/workflows/release.yml/badge.svg)
 [![Go Report Card](https://goreportcard.com/badge/github.com/Spendesk/github-actions-exporter)](https://goreportcard.com/report/github.com/Spendesk/github-actions-exporter)
 
-Container image : https://hub.docker.com/repository/docker/spendeskplatform/github-actions-exporter
+Container image : https://github.com/Labbs/github-actions-exporter/pkgs/container/github-actions-exporter
 
 Helm Chart :
 ```
- helm chart repo: https://Spendesk.github.io/github-actions-exporter/
+ helm chart repo: https://labbs.github.io/helm-charts/
  chart: github-actions-exporter
  version: "0.1.4"
 ```
