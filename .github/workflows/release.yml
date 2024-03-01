@@ -38,7 +38,7 @@ jobs:
 
     - name: Build app
       run: CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -ldflags="-X 'main.version=${{ steps.version.outputs.full }}'" -o bin/${{ env.APP_NAME }} .
-    
+
     - name: Generate MD5
       run: md5sum bin/${{ env.APP_NAME }} > bin/${{ env.APP_NAME }}.md5
 
@@ -60,9 +60,9 @@ jobs:
         tags: |
           type=ref,event=branch
           type=ref,event=pr
-          type=semver,pattern={{version}}
-          type=semver,pattern={{major}}.{{minor}}
-          type=semver,pattern={{major}}
+          type=semver,pattern={{raw}}
+          type=semver,pattern=v{{major}}.{{minor}}
+          type=semver,pattern=v{{major}}
           type=sha
 
     - name: Log in to GitHub Container Registry
