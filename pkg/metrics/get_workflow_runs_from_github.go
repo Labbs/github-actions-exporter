@@ -120,6 +120,8 @@ func getWorkflowRunsFromGithub() {
 					s = 3
 				} else if run.GetConclusion() == "queued" {
 					s = 4
+				} else if run.GetConclusion() == "cancelled" {
+					s = 5
 				}
 
 				fields := getRelevantFields(repo, run)
