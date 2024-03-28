@@ -27,6 +27,7 @@ var (
 
 // InitMetrics - register metrics in prometheus lib and start func for monitor
 func InitMetrics() {
+	log.Println("Init metric")
 	workflowRunStatusGauge = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "github_workflow_run_status",
