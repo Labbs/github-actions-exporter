@@ -22,6 +22,7 @@ var (
 	Debug          bool
 	EnterpriseName string
 	WorkflowFields string
+	RepoFilePath   string
 )
 
 // InitConfiguration - set configuration from env vars or command parameters
@@ -86,13 +87,6 @@ func InitConfiguration() []cli.Flag {
 			Usage:       "List all organizations you want get informations. Format <orga>,<orga2>,<orga3> (like test,test2)",
 			Destination: &Github.Organizations,
 		},
-		&cli.StringSliceFlag{
-			Name:        "github_repos",
-			Aliases:     []string{"grs"},
-			EnvVars:     []string{"GITHUB_REPOS"},
-			Usage:       "List all repositories you want get informations. Format <orga>/<repo>,<orga>/<repo2>,<orga>/<repo3> (like test/test)",
-			Destination: &Github.Repositories,
-		},
 		&cli.BoolFlag{
 			Name:        "debug_profile",
 			EnvVars:     []string{"DEBUG_PROFILE"},
@@ -126,6 +120,12 @@ func InitConfiguration() []cli.Flag {
 			Value:       100 * 1024 * 1024,
 			Usage:       "Size of Github HTTP cache in bytes",
 			Destination: &Github.CacheSizeBytes,
+		},
+		&cli.StringFlag{
+			Name:        "repo_list_file",
+			Usage:       "Path to the repo list file",
+			EnvVars:     []string{"REPO_LIST_FILE"},
+			Destination: &RepoFilePath,
 		},
 	}
 }
