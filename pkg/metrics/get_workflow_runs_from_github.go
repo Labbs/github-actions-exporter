@@ -60,12 +60,12 @@ func getRelevantFields(repo string, run *github.WorkflowRun) []string {
 }
 
 func getRecentWorkflowRuns(owner string, repo string) []*github.WorkflowRun {
-	window_start := time.Now().Add(time.Duration(-12) * time.Hour).Format(time.RFC3339)
+	window_start := time.Now().Add(time.Duration(-1) * time.Minute).Format(time.RFC3339)
 	opt := &github.ListWorkflowRunsOptions{
 		ListOptions: github.ListOptions{PerPage: 200},
 		Created:     ">=" + window_start,
 	}
-
+	log.Printf("getRecentWorkflowRuns for %s", repo)
 	var runs []*github.WorkflowRun
 	for {
 		resp, rr, err := client.Actions.ListRepositoryWorkflowRuns(context.Background(), owner, repo, opt)
