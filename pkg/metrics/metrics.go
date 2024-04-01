@@ -27,17 +27,18 @@ var (
 
 // InitMetrics - register metrics in prometheus lib and start func for monitor
 func InitMetrics() {
+	log.Println("Init metric")
 	workflowRunStatusGauge = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "github_workflow_run_status",
-			Help: "Workflow run status of all workflow runs created in the last 12hr",
+			Help: "Workflow run status of all workflow runs created in the last 1 minute",
 		},
 		strings.Split(config.WorkflowFields, ","),
 	)
 	workflowRunDurationGauge = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Name: "github_workflow_run_duration_ms",
-			Help: "Workflow run duration (in milliseconds) of all workflow runs created in the last 12hr",
+			Help: "Workflow run duration (in milliseconds) of all workflow runs created in the last 1 minute",
 		},
 		strings.Split(config.WorkflowFields, ","),
 	)

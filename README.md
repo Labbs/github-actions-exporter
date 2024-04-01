@@ -56,6 +56,7 @@ Gauge type
 | 2 | Skipped |
 | 3 | In Progress |
 | 4 | Queued |
+| 5 | Cancelled |
 
 **Fields**
 

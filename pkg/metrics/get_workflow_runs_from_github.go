@@ -45,6 +45,8 @@ func getFieldValue(repo string, run github.WorkflowRun, field string) string {
 		return *run.Event
 	case "status":
 		return *run.Status
+	case "conclusion":
+		return run.GetConclusion()
 	}
 	log.Printf("Tried to fetch invalid field '%s'", field)
 	return ""
@@ -120,6 +122,8 @@ func getWorkflowRunsFromGithub() {
 					s = 3
 				} else if run.GetConclusion() == "queued" {
 					s = 4
+				} else if run.GetConclusion() == "cancelled" {
+					s = 5
 				}
 
 				fields := getRelevantFields(repo, run)
