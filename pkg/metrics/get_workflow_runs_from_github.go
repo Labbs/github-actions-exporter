@@ -45,6 +45,8 @@ func getFieldValue(repo string, run github.WorkflowRun, field string) string {
 		return *run.Event
 	case "status":
 		return *run.Status
+	case "conclusion":
+		return run.GetConclusion()
 	}
 	log.Printf("Tried to fetch invalid field '%s'", field)
 	return ""
@@ -106,8 +108,6 @@ func getRunUsage(owner string, repo string, runId int64) *github.WorkflowRunUsag
 // getWorkflowRunsFromGithub - return informations and status about a workflow
 func getWorkflowRunsFromGithub() {
 	for {
-		log.Println("Reset workflowRunStatusGauge")
-		workflowRunStatusGauge.Reset()
 		for _, repo := range repositories {
 			r := strings.Split(repo, "/")
 			runs := getRecentWorkflowRuns(r[0], r[1])
@@ -122,6 +122,8 @@ func getWorkflowRunsFromGithub() {
 					s = 3
 				} else if run.GetConclusion() == "queued" {
 					s = 4
+				} else if run.GetConclusion() == "cancelled" {
+					s = 5
 				}
 
 				fields := getRelevantFields(repo, run)

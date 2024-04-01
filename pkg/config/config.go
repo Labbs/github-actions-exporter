@@ -104,7 +104,7 @@ func InitConfiguration() []cli.Flag {
 			Name:        "export_fields",
 			EnvVars:     []string{"EXPORT_FIELDS"},
 			Usage:       "A comma separated list of fields for workflow metrics that should be exported",
-			Value:       "repo,id,node_id,head_branch,head_sha,run_number,workflow_id,workflow,event,status",
+			Value:       "repo,id,node_id,head_branch,head_sha,run_number,workflow_id,workflow,event,status,conclusion",
 			Destination: &WorkflowFields,
 		},
 		&cli.BoolFlag{
