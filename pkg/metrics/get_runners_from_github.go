@@ -51,6 +51,8 @@ func getAllRepoRunners(owner string, repo string) []*github.Runner {
 // getRunnersFromGithub - return information about runners and their status for a specific repo
 func getRunnersFromGithub() {
 	for {
+		runnersGauge.Reset()
+
 		for _, repo := range repositories {
 			r := strings.Split(repo, "/")
 

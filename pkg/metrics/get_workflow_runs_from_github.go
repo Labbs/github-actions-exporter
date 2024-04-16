@@ -106,6 +106,9 @@ func getRunUsage(owner string, repo string, runId int64) *github.WorkflowRunUsag
 // getWorkflowRunsFromGithub - return informations and status about a workflow
 func getWorkflowRunsFromGithub() {
 	for {
+		workflowRunStatusGauge.Reset()
+		workflowRunDurationGauge.Reset()
+
 		for _, repo := range repositories {
 			r := strings.Split(repo, "/")
 			runs := getRecentWorkflowRuns(r[0], r[1])
