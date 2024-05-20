@@ -27,6 +27,8 @@ func getFieldValue(repo string, run github.WorkflowRun, field string) string {
 		return *run.HeadSHA
 	case "run_number":
 		return strconv.Itoa(*run.RunNumber)
+	case "run_attempt":
+		return strconv.Itoa(*run.RunAttempt)		
 	case "workflow_id":
 		return strconv.FormatInt(*run.WorkflowID, 10)
 	case "workflow":
