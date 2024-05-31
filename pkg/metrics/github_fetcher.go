@@ -100,6 +100,10 @@ func periodicGithubFetcher() {
 		ww := make(map[string]map[int64]github.Workflow)
 		for _, repo := range repos_to_fetch {
 			r := strings.Split(repo, "/")
+			if len(r) != 2 {
+				log.Printf("Skipping invalid repository %s", repo)
+				continue
+			}
 			workflows_for_repo := getAllWorkflowsForRepo(r[0], r[1])
 			if len(workflows_for_repo) == 0 {
 				continue
