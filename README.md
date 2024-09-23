@@ -13,7 +13,7 @@ Container image : https://github.com/Labbs/github-actions-exporter/pkgs/containe
 
 Helm Chart :
 ```
- helm chart repo: https://labbs.github.io/helm-charts/
+ helm chart repo: https://labbs.github.io/github-actions-exporter/
  chart: github-actions-exporter
  version: "0.1.4"
 ```
