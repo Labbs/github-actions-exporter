@@ -3,6 +3,7 @@ package metrics
 import (
 	"context"
 	"log"
+	"os"
 	"strings"
 	"time"
 
@@ -81,8 +82,12 @@ func periodicGithubFetcher() {
 
 		// Fetch repositories (if dynamic)
 		var repos_to_fetch []string
-		if len(config.Github.Repositories.Value()) > 0 {
-			repos_to_fetch = config.Github.Repositories.Value()
+		if len(config.RepoFilePath) > 0 {
+			data, err := os.ReadFile(config.RepoFilePath)
+			if err != nil {
+				log.Fatalf("error reading file %s", err)
+			}
+			repos_to_fetch = strings.Split(string(data), "\n")
 		} else {
 			for _, orga := range config.Github.Organizations.Value() {
 				repos_to_fetch = append(repos_to_fetch, getAllReposForOrg(orga)...)
@@ -95,6 +100,10 @@ func periodicGithubFetcher() {
 		ww := make(map[string]map[int64]github.Workflow)
 		for _, repo := range repos_to_fetch {
 			r := strings.Split(repo, "/")
+			if len(r) != 2 {
+				log.Printf("Skipping invalid repository %s", repo)
+				continue
+			}
 			workflows_for_repo := getAllWorkflowsForRepo(r[0], r[1])
 			if len(workflows_for_repo) == 0 {
 				continue
