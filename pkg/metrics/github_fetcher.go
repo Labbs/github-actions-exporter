@@ -106,6 +106,6 @@ func periodicGithubFetcher() {
 		repositories = non_empty_repos
 		workflows = ww
 
-		time.Sleep(time.Duration(config.Github.Refresh) * 5 * time.Second)
+		time.Sleep(time.Duration(config.Github.Refresh) * time.Second)
 	}
 }
