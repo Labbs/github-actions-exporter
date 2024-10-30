@@ -2,6 +2,7 @@ package server
 
 import (
 	"log"
+	"net"
 	"strconv"
 
 	"github.com/fasthttp/router"
@@ -30,6 +31,7 @@ func RunServer(ctx *cli.Context) error {
 		r.GET("/debug/pprof/{profile}", pprofHandlerIndex)
 	}
 
-	log.Print("exporter listening on 0.0.0.0:" + strconv.Itoa(config.Port))
-	return fasthttp.ListenAndServe(":"+strconv.Itoa(config.Port), r.Handler)
+	log.Print("exporter listening on 0.0.0.0::" + strconv.Itoa(config.Port))
+	ln, _ := net.Listen("tcp", ":"+strconv.Itoa(config.Port))
+	return fasthttp.Serve(ln, r.Handler)
 }
