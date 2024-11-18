@@ -9,7 +9,7 @@ import (
 
 	"github.com/spendesk/github-actions-exporter/pkg/config"
 
-	"github.com/google/go-github/v45/github"
+	"github.com/google/go-github/v66/github"
 	"github.com/prometheus/client_golang/prometheus"
 )
 
@@ -25,7 +25,7 @@ var (
 
 func getAllRepoRunners(owner string, repo string) []*github.Runner {
 	var runners []*github.Runner
-	opt := &github.ListOptions{PerPage: 200}
+	opt := &github.ListRunnersOptions{ListOptions: github.ListOptions{PerPage: 200}}
 
 	for {
 		resp, rr, err := client.Actions.ListRunners(context.Background(), owner, repo, opt)

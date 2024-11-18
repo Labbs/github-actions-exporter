@@ -1,9 +1,9 @@
 # Default values for github-actions-exporter.
 
 image:
-  repository: ghcr.io/labbs/github-actions-exporter
+  repository: spendeskplatform/github-actions-exporter
   pullPolicy: IfNotPresent
-  tag: "1.9.0"
+  tag: "v1.8.0"
 
 nameOverride: ""
 fullnameOverride: ""
@@ -24,7 +24,9 @@ env:
 #                key: github_app_installation_id
 #                key: github_app_private_key
 secret:
-  name: "actions-exporter"
+  enabled: false
+  extra: #list of secrets
+    # github_token:  fdgdgdffdg 
 
 serviceMonitor:
   enabled: yes

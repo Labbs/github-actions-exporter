@@ -40,9 +40,18 @@ func getBillableFromGithub() {
 						log.Printf("GetWorkflowUsageByID error for %s: %s", repo, err.Error())
 						break
 					}
-					workflowBillGauge.WithLabelValues(repo, strconv.FormatInt(*v.ID, 10), *v.NodeID, *v.Name, *v.State, "MACOS").Set(float64(resp.GetBillable().MacOS.GetTotalMS()) / 1000)
-					workflowBillGauge.WithLabelValues(repo, strconv.FormatInt(*v.ID, 10), *v.NodeID, *v.Name, *v.State, "WINDOWS").Set(float64(resp.GetBillable().Windows.GetTotalMS()) / 1000)
-					workflowBillGauge.WithLabelValues(repo, strconv.FormatInt(*v.ID, 10), *v.NodeID, *v.Name, *v.State, "UBUNTU").Set(float64(resp.GetBillable().Ubuntu.GetTotalMS()) / 1000)
+					billable := resp.GetBillable()
+					if billable != nil {
+						if macosUsage, ok := (*billable)["MACOS"]; ok {
+							workflowBillGauge.WithLabelValues(repo, strconv.FormatInt(*v.ID, 10), *v.NodeID, *v.Name, *v.State, "MACOS").Set(float64(macosUsage.GetTotalMS()) / 1000)
+						}
+						if windowsUsage, ok := (*billable)["WINDOWS"]; ok {
+							workflowBillGauge.WithLabelValues(repo, strconv.FormatInt(*v.ID, 10), *v.NodeID, *v.Name, *v.State, "WINDOWS").Set(float64(windowsUsage.GetTotalMS()) / 1000)
+						}
+						if ubuntuUsage, ok := (*billable)["UBUNTU"]; ok {
+							workflowBillGauge.WithLabelValues(repo, strconv.FormatInt(*v.ID, 10), *v.NodeID, *v.Name, *v.State, "UBUNTU").Set(float64(ubuntuUsage.GetTotalMS()) / 1000)
+						}
+					}
 					break
 				}
 
