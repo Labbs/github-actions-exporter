@@ -29,6 +29,8 @@ func getFieldValue(repo string, run github.WorkflowRun, field string) string {
 		return strconv.Itoa(*run.RunNumber)
 	case "workflow_id":
 		return strconv.FormatInt(*run.WorkflowID, 10)
+	case "actor":
+		return getActorLogin(&run)
 	case "workflow":
 		r, exist := workflows[repo]
 		if !exist {
@@ -48,6 +50,10 @@ func getFieldValue(repo string, run github.WorkflowRun, field string) string {
 	}
 	log.Printf("Tried to fetch invalid field '%s'", field)
 	return ""
+}
+
+func getActorLogin(run *github.WorkflowRun) string {
+    return run.Actor.GetLogin()
 }
 
 func getRelevantFields(repo string, run *github.WorkflowRun) []string {
