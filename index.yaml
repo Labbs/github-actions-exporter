@@ -9,6 +9,6 @@ entries:
     name: github-actions-exporter
     type: application
     urls:
-    - https://Spendesk.github.io/github-actions-exporter/github-actions-exporter-0.1.4.tgz
+    - https://labbs.github.io/github-actions-exporter/github-actions-exporter-0.1.4.tgz
     version: 0.1.4
 generated: "2023-10-03T07:25:30.506303481Z"
